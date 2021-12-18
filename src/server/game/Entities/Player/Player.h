@@ -34,6 +34,7 @@
 #include <queue>
 #include <unordered_set>
 #include "ObjectMgr.h"
+#include "Group.h"
 
 
 struct AccessRequirement;
@@ -2211,7 +2212,17 @@ class TC_GAME_API Player : public Unit, public GridObject<Player>
         bool IsMaxParagonLevel() const { return paragonLevel >= 100; }
 
         // Monster level for players is the monster level they wish to engage monsters with. For units it is the monster level they are, which multiplies their stats and enhances loot.
-        uint16 GetMonsterLevel() const { return monsterLevel; }
+        uint16 GetMonsterLevel(bool personalMonsterLevel = false) const {
+            if (personalMonsterLevel) {
+                return monsterLevel;
+            }
+            if (GetGroup()) {
+                return GetGroup()->GetMonsterLevel();
+            }
+            else {
+                return monsterLevel;
+            }
+        }
         bool SetMonsterLevel(uint16 monsterLevel) {
             if (monsterLevel > sObjectMgr->GetMaxMonsterLevel()) {
                 return false;
@@ -2220,7 +2231,8 @@ class TC_GAME_API Player : public Unit, public GridObject<Player>
             }
             return true;
         }
-        void SetStat(Stats stat, int32 val) override;
+        //void SetStat(Stats stat, int32 val) override;
+        virtual float GetTotalStatValue(Stats stat) const override;
 
 
     protected:

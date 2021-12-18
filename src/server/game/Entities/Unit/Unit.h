@@ -1463,7 +1463,7 @@ class TC_GAME_API Unit : public WorldObject
         void UpdateDamagePctDoneMods(WeaponAttackType attackType);
         void UpdateAllDamagePctDoneMods();
 
-        float GetTotalStatValue(Stats stat) const;
+        virtual float GetTotalStatValue(Stats stat) const;
         float GetTotalAuraModValue(UnitMods unitMod) const;
         SpellSchools GetSpellSchoolByAuraGroup(UnitMods unitMod) const;
         Stats GetStatByAuraGroup(UnitMods unitMod) const;

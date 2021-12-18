@@ -206,6 +206,12 @@ void Player::UpdateSpellDamageAndHealingBonus()
     }
 }
 
+float Player::GetTotalStatValue(Stats stat) const {
+    std::map<Stats, uint32> paragonStats = { { STAT_STRENGTH, paragonStrength }, {STAT_AGILITY, paragonAgility }, {STAT_STAMINA, paragonStamina }, {STAT_INTELLECT, paragonIntellect }, {STAT_SPIRIT, paragonSpirit } };
+
+    return Unit::GetTotalStatValue(stat) + paragonStats.find(Stats(stat))->second;
+}
+
 bool Player::UpdateAllStats()
 {
     //std::map<Stats, uint32> paragonStats = { { STAT_STRENGTH, paragonStrength }, {STAT_AGILITY, paragonAgility }, {STAT_STAMINA, paragonStamina }, {STAT_INTELLECT, paragonIntellect }, {STAT_SPIRIT, paragonSpirit } };
@@ -243,18 +249,18 @@ bool Player::UpdateAllStats()
     return true;
 }
 
-void Player::SetStat(Stats stat, int32 val) {
-    std::map<Stats, uint32> paragonStats = { { STAT_STRENGTH, paragonStrength }, {STAT_AGILITY, paragonAgility }, {STAT_STAMINA, paragonStamina }, {STAT_INTELLECT, paragonIntellect }, {STAT_SPIRIT, paragonSpirit } };
-
-    float value = GetTotalStatValue(Stats(stat));
-    auto paragonStat = paragonStats.find(Stats(stat));
-    if (paragonStat->second > 0) {
-        value += paragonStat->second;
-    }
-
-    Unit::SetStat(Stats(stat), int32(value));
-
-}
+//void Player::SetStat(Stats stat, int32 val) {
+//    std::map<Stats, uint32> paragonStats = { { STAT_STRENGTH, paragonStrength }, {STAT_AGILITY, paragonAgility }, {STAT_STAMINA, paragonStamina }, {STAT_INTELLECT, paragonIntellect }, {STAT_SPIRIT, paragonSpirit } };
+//
+//    //float value = GetTotalStatValue(Stats(stat));
+//    auto paragonStat = paragonStats.find(Stats(stat));
+//    if (paragonStat->second > 0) {
+//        val += paragonStat->second;
+//    }
+//
+//    Unit::SetStat(Stats(stat), val);
+//
+//}
 
 void Player::ApplySpellPenetrationBonus(int32 amount, bool apply)
 {

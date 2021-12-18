@@ -6600,19 +6600,13 @@ uint32 Unit::SpellDamageBonusDone(Unit* victim, SpellInfo const* spellProto, uin
         DoneTotal += int32(DoneAdvertisedBenefit * coeff * factorMod);
 
     }
-
     float tmpDamage = float(int32(pdamage) + DoneTotal) * DoneTotalMod;
-    std::cout << "Before spell dmg multiplier" << std::endl;
-    if (IsCreature()) {
-        if (GetMonsterLevel() > 1) {
-            tmpDamage *= GetMonsterLevelDamageMultiplier();
-        }
-    }
 
     // apply spellmod to Done damage (flat and pct)
     if (Player* modOwner = GetSpellModOwner())
         modOwner->ApplySpellMod(spellProto->Id, damagetype == DOT ? SPELLMOD_DOT : SPELLMOD_DAMAGE, tmpDamage);
 
+    tmpDamage *= GetMonsterLevelDamageMultiplier();
 
     return uint32(std::max(tmpDamage, 0.0f));
 }
@@ -7482,6 +7476,12 @@ uint32 Unit::SpellHealingBonusDone(Unit* victim, SpellInfo const* spellProto, ui
     // apply spellmod to Done amount
     if (Player* modOwner = GetSpellModOwner())
         modOwner->ApplySpellMod(spellProto->Id, damagetype == DOT ? SPELLMOD_DOT : SPELLMOD_DAMAGE, heal);
+
+    if (IsCreature()) {
+        if (GetMonsterLevel() > 1) {
+            heal *= GetMonsterLevelDamageMultiplier();
+        }
+    }
 
     return uint32(std::max(heal, 0.0f));
 }

@@ -216,7 +216,7 @@ bool Group::Create(Player* leader)
     else if (!AddMember(leader))
         return false;
 
-    SetMonsterLevel(leader->GetMonsterLevel());
+    SetMonsterLevel(leader->GetMonsterLevel(true));
 
     return true;
 }

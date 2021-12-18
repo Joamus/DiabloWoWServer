@@ -217,15 +217,7 @@ bool CombatManager::SetInCombatWith(Unit* who)
 
         // You cannot set monster level mid combat
         if (player != nullptr && unit != nullptr && !unit->IsInCombat()) {
-            uint16 monsterLevel = 1;
-            Group* group = player->GetGroup();
-            if (group) {
-                monsterLevel = group->GetMonsterLevel();
-            }
-            else {
-                monsterLevel = player->GetMonsterLevel();
-            }
-            unit->SetMonsterLevel(monsterLevel);
+            unit->SetMonsterLevel(player->GetMonsterLevel());
         }
     
     }

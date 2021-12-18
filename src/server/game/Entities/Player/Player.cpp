@@ -19494,7 +19494,7 @@ void Player::SaveToDB(CharacterDatabaseTransaction trans, bool create /* = false
         stmt->setUInt8(index++, GetClass());
         stmt->setUInt8(index++, GetNativeGender());   // save gender from PLAYER_BYTES_3, UNIT_BYTES_0 changes with every transform effect
         stmt->setUInt8(index++, GetLevel());
-        stmt->setUInt32(index++, GetXP());
+        stmt->setUInt32(index++, !IsMaxLevel() ? GetXP() : 0);
         stmt->setUInt32(index++, GetMoney());
         stmt->setUInt8(index++, GetSkinId());
         stmt->setUInt8(index++, GetFaceId());
@@ -19620,7 +19620,7 @@ void Player::SaveToDB(CharacterDatabaseTransaction trans, bool create /* = false
         stmt->setUInt32(index++, GetParagonLevel());
         stmt->setUInt32(index++, GetParagonXP());
         stmt->setUInt32(index++, GetAvailableParagonPoints());
-        stmt->setUInt16(index++, GetMonsterLevel());
+        stmt->setUInt16(index++, GetMonsterLevel(true));
 
         // Index
         stmt->setUInt32(index++, GetGUID().GetCounter());
@@ -27116,7 +27116,7 @@ void Player::GiveParagonLevel(uint32 level) {
     if (couldSetLevel) {
         paragonPoints += 20;
         ChatHandler(GetSession()).PSendSysMessage("Congraulations! You leveled up your paragon level!");
-        ChatHandler(GetSession()).SendSysMessage("You have %u available paragon points", GetAvailableParagonPoints());
+        ChatHandler(GetSession()).PSendSysMessage("You have %u available paragon points", GetAvailableParagonPoints());
     } else {
         ChatHandler(GetSession()).SendSysMessage("The paragon level could not be set; it is above the level cap of ", sObjectMgr->GetMaxParagonLevel());
 
