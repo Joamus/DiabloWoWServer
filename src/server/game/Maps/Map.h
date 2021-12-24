@@ -440,7 +440,8 @@ class TC_GAME_API Map : public GridRefManager<NGridType>
             CANNOT_ENTER_TOO_MANY_INSTANCES, // Player has entered too many instances recently
             CANNOT_ENTER_MAX_PLAYERS, // Target map already has the maximum number of players allowed
             CANNOT_ENTER_ZONE_IN_COMBAT, // A boss encounter is currently in progress on the target map
-            CANNOT_ENTER_UNSPECIFIED_REASON
+            CANNOT_ENTER_UNSPECIFIED_REASON,
+            CANNOT_ENTER_INSTANCE_BIND_MONSTER_LEVEL_MISMATCH
         };
         virtual EnterState CannotEnter(Player* /*player*/) { return CAN_ENTER; }
         char const* GetMapName() const;

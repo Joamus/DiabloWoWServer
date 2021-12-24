@@ -88,7 +88,7 @@ class LootTemplate::LootGroup                               // A set of loot def
         bool HasQuestDrop() const;                          // True if group includes at least 1 quest drop entry
         bool HasQuestDropForPlayer(Player const* player) const;
                                                             // The same for active quests of the player
-        void Process(Loot& loot, uint16 lootMode) const;    // Rolls an item from the group (if any) and adds the item to the loot
+        void Process(Loot& loot, uint16 lootMode, uint16 monsterLevel = 1) const;    // Rolls an item from the group (if any) and adds the item to the loot
         float RawTotalChance() const;                       // Overall chance for the group (without equal chanced items)
         float TotalChance() const;                          // Overall chance for the group
 
@@ -439,10 +439,10 @@ void LootTemplate::LootGroup::CopyConditions(ConditionContainer /*conditions*/)
 }
 
 // Rolls an item from the group (if any takes its chance) and adds the item to the loot
-void LootTemplate::LootGroup::Process(Loot& loot, uint16 lootMode) const
+void LootTemplate::LootGroup::Process(Loot& loot, uint16 lootMode, uint16 monsterLevel) const
 {
     if (LootStoreItem const* item = Roll(loot, lootMode))
-        loot.AddItem(*item);
+        loot.AddItem(*item, monsterLevel);
 }
 
 // Overall chance for the group without equal chanced items
@@ -559,7 +559,7 @@ void LootTemplate::CopyConditions(LootItem* li) const
 }
 
 // Rolls for every item in the template and adds the rolled items the the loot
-void LootTemplate::Process(Loot& loot, bool rate, uint16 lootMode, uint8 groupId) const
+void LootTemplate::Process(Loot& loot, bool rate, uint16 lootMode, uint8 groupId, uint16 monsterLevel) const
 {
     if (groupId)                                            // Group reference uses own processing of the group
     {
@@ -569,7 +569,7 @@ void LootTemplate::Process(Loot& loot, bool rate, uint16 lootMode, uint8 groupId
         if (!Groups[groupId - 1])
             return;
 
-        Groups[groupId - 1]->Process(loot, lootMode);
+        Groups[groupId - 1]->Process(loot, lootMode, monsterLevel);
         return;
     }
 
@@ -591,16 +591,16 @@ void LootTemplate::Process(Loot& loot, bool rate, uint16 lootMode, uint8 groupId
 
             uint32 maxcount = uint32(float(item->maxcount) * sWorld->getRate(RATE_DROP_ITEM_REFERENCED_AMOUNT));
             for (uint32 loop = 0; loop < maxcount; ++loop)      // Ref multiplicator
-                Referenced->Process(loot, rate, lootMode, item->groupid);
+                Referenced->Process(loot, rate, lootMode, item->groupid, monsterLevel);
         }
         else                                                    // Plain entries (not a reference, not grouped)
-            loot.AddItem(*item);                                // Chance is already checked, just add
+            loot.AddItem(*item, monsterLevel);                                // Chance is already checked, just add
     }
 
     // Now processing groups
     for (LootGroups::const_iterator i = Groups.begin(); i != Groups.end(); ++i)
         if (LootGroup* group = *i)
-            group->Process(loot, lootMode);
+            group->Process(loot, lootMode, monsterLevel);
 }
 
 // True if template includes at least 1 quest drop entry

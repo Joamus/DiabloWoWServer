@@ -2207,6 +2207,9 @@ class TC_GAME_API Player : public Unit, public GridObject<Player>
         void ResetParagon();
 
         uint32 GetAvailableParagonPoints() const;
+        void SetAvailableParagonPoints(uint32 points) {
+            paragonPoints = points;
+        }
         uint32 GetParagonXP() const { return paragonXp; }
         void SetParagonXP(uint32 newXP) { paragonXp = newXP; }
         bool IsMaxParagonLevel() const { return paragonLevel >= 100; }
@@ -2216,7 +2219,7 @@ class TC_GAME_API Player : public Unit, public GridObject<Player>
             if (personalMonsterLevel) {
                 return monsterLevel;
             }
-            if (GetGroup()) {
+            if (GetGroup() && GetGroup()->GetGUID()) {
                 return GetGroup()->GetMonsterLevel();
             }
             else {

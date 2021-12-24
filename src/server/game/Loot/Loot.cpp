@@ -136,23 +136,25 @@ void Loot::clear()
 }
 
 // Inserts the item into the loot (called by LootTemplate processors)
-void Loot::AddItem(LootStoreItem const& item)
+void Loot::AddItem(LootStoreItem const& item, uint16 monsterLevel)
 {
 
-    ItemTemplate const* proto = sObjectMgr->GetItemTemplate(item.itemid);
+    ItemTemplate* protoWithHigherMonsterLevel = monsterLevel > 1 ? sObjectMgr->GetMonsterLevelItem(item.itemid, monsterLevel) : nullptr;
+    ItemTemplate const* proto = protoWithHigherMonsterLevel && protoWithHigherMonsterLevel->ItemId ? protoWithHigherMonsterLevel : sObjectMgr->GetItemTemplate(item.itemid);
     if (!proto)
         return;
+    LootStoreItem _item = item;
+    _item.itemid = proto->ItemId;
 
-
-    uint32 count = urand(item.mincount, item.maxcount);
+    uint32 count = urand(_item.mincount, _item.maxcount);
     uint32 stacks = count / proto->GetMaxStackSize() + ((count % proto->GetMaxStackSize()) ? 1 : 0);
 
-    std::vector<LootItem>& lootItems = item.needs_quest ? quest_items : items;
-    uint32 limit = item.needs_quest ? MAX_NR_QUEST_ITEMS : MAX_NR_LOOT_ITEMS;
+    std::vector<LootItem>& lootItems = _item.needs_quest ? quest_items : items;
+    uint32 limit = _item.needs_quest ? MAX_NR_QUEST_ITEMS : MAX_NR_LOOT_ITEMS;
 
     for (uint32 i = 0; i < stacks && lootItems.size() < limit; ++i)
     {
-        LootItem generatedLoot(item);
+        LootItem generatedLoot(_item);
         generatedLoot.count = std::min(count, proto->GetMaxStackSize());
         generatedLoot.itemIndex = lootItems.size();
        
@@ -180,13 +182,13 @@ void Loot::AddItem(LootStoreItem const& item)
         // non-conditional one-player only items are counted here,
         // free for all items are counted in FillFFALoot(),
         // non-ffa conditionals are counted in FillNonQuestNonFFAConditionalLoot()
-        if (!item.needs_quest && item.conditions.empty() && !proto->HasFlag(ITEM_FLAG_MULTI_DROP))
+        if (!_item.needs_quest && _item.conditions.empty() && !proto->HasFlag(ITEM_FLAG_MULTI_DROP))
             ++unlootedCount;
     }
 }
 
 // Calls processor of corresponding LootTemplate (which handles everything including references)
-bool Loot::FillLoot(uint32 lootId, LootStore const& store, Player* lootOwner, bool personal, bool noEmptyError, uint16 lootMode /*= LOOT_MODE_DEFAULT*/)
+bool Loot::FillLoot(uint32 lootId, LootStore const& store, Player* lootOwner, bool personal, bool noEmptyError, uint16 lootMode, uint16 monsterLevel /*= LOOT_MODE_DEFAULT*/)
 {
     // Must be provided
     if (!lootOwner)
@@ -207,7 +209,7 @@ bool Loot::FillLoot(uint32 lootId, LootStore const& store, Player* lootOwner, bo
     items.reserve(MAX_NR_LOOT_ITEMS);
     quest_items.reserve(MAX_NR_QUEST_ITEMS);
 
-    tab->Process(*this, store.IsRatesAllowed(), lootMode);          // Processing is done there, callback via Loot::AddItem()
+    tab->Process(*this, store.IsRatesAllowed(), lootMode, 0, monsterLevel);          // Processing is done there, callback via Loot::AddItem()
 
                                                                     // Setting access rights for group loot case
     Group* group = lootOwner->GetGroup();

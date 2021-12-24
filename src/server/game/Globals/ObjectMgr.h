@@ -37,6 +37,7 @@
 #include <iterator>
 #include <map>
 #include <unordered_map>
+#include <iostream>
 
 class Item;
 class Unit;
@@ -1577,6 +1578,15 @@ class TC_GAME_API ObjectMgr
         bool LoadParagonXpInfo();
         uint16 GetMaxMonsterLevel() const { return MAX_MONSTER_LEVEL; }
 
+        ItemTemplate* GetMonsterLevelItem(uint32 entry, uint16 monsterLevel) {
+            auto itr = _itemMonsterLevelContainer.find(std::pair<uint32, uint16>(entry, monsterLevel));
+            ItemTemplate* item = &itr->second;
+            if (item != NULL) {
+                return item;
+            }
+            return nullptr;
+        }
+
     private:
         // first free id for selected id type
         uint32 _auctionId;
@@ -1655,7 +1665,7 @@ class TC_GAME_API ObjectMgr
         InstanceTemplateContainer _instanceTemplateStore;
         
         std::map<uint32, uint32> paragonXpInfo;
-        const uint16 MAX_MONSTER_LEVEL = 100;
+        const uint16 MAX_MONSTER_LEVEL = 20;
 
     private:
         void LoadScripts(ScriptsType type);

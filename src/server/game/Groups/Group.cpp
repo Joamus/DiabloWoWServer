@@ -173,6 +173,9 @@ bool Group::Create(Player* leader)
     m_dungeonDifficulty = DUNGEON_DIFFICULTY_NORMAL;
     m_raidDifficulty = RAID_DIFFICULTY_10MAN_NORMAL;
 
+    SetMonsterLevel(leader->GetMonsterLevel(true));
+
+
     if (!isBGGroup() && !isBFGroup())
     {
         m_dungeonDifficulty = leader->GetDungeonDifficulty();
@@ -216,7 +219,6 @@ bool Group::Create(Player* leader)
     else if (!AddMember(leader))
         return false;
 
-    SetMonsterLevel(leader->GetMonsterLevel(true));
 
     return true;
 }
@@ -2684,4 +2686,23 @@ void Group::StartLeaderOfflineTimer()
 void Group::StopLeaderOfflineTimer()
 {
     m_isLeaderOffline = false;
+}
+
+bool Group::SetMonsterLevel(uint16 monsterLevel) {
+    if (monsterLevel > sObjectMgr->GetMaxMonsterLevel() || monsterLevel < 1) {
+        return false;
+    }
+    else {
+        this->monsterLevel = monsterLevel;
+    }
+
+    uint8 index = 0;
+    CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_GROUP_MONSTER_LEVEL);
+
+    stmt->setUInt16(index++, GetMonsterLevel());
+    stmt->setUInt32(index++, m_dbStoreId);
+
+    CharacterDatabase.Execute(stmt);
+
+    return true;
 }

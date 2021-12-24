@@ -151,18 +151,20 @@ public:
 
         int amount = 0;
         if (strcmp(args, "all") == 0) {
-            amount = player->GetAvailableParagonPoints();
+            amount += player->GetAvailableParagonPoints();
         }
         else {
             amount = atoi((char*)args);
         }
 
-        if (amount < 0 || !amount) {
+        if (amount < 0) {
             handler->SendSysMessage("Invalid amount");
             handler->SetSentErrorMessage(true);
 
             return false;
         }
+
+        player->SetAvailableParagonPoints(player->GetAvailableParagonPoints() + player->GetParagonStrength());
 
         const bool didSetStat = player->SetParagonStrength(amount, false);
         if (didSetStat) {
@@ -197,12 +199,14 @@ public:
             amount = atoi((char*)args);
         }
 
-        if (amount < 0 || !amount) {
+        if (amount < 0) {
             handler->SendSysMessage("Invalid amount");
             handler->SetSentErrorMessage(true);
 
             return false;
         }
+
+        player->SetAvailableParagonPoints(player->GetAvailableParagonPoints() + player->GetParagonAgility());
 
         const bool didSetStat = player->SetParagonAgility(amount, false);
         if (didSetStat) {
@@ -236,12 +240,13 @@ public:
             amount = atoi((char*)args);
         }
 
-        if (amount < 0 || !amount) {
+        if (amount < 0) {
             handler->SendSysMessage("Invalid amount");
             handler->SetSentErrorMessage(true);
 
             return false;
         }
+        player->SetAvailableParagonPoints(player->GetAvailableParagonPoints() + player->GetParagonStamina());
 
         const bool didSetStat = player->SetParagonStamina(amount, false);
         if (didSetStat) {
@@ -275,14 +280,16 @@ public:
             amount = atoi((char*)args);
         }
 
-        if (amount < 0 || !amount) {
+        if (amount < 0) {
             handler->PSendSysMessage("Invalid amount");
             handler->SetSentErrorMessage(true);
 
             return false;
         }
 
+        player->SetAvailableParagonPoints(player->GetAvailableParagonPoints() + player->GetParagonIntellect());
         const bool didSetStat = player->SetParagonIntellect(amount, false);
+
         if (didSetStat) {
             handler->PSendSysMessage("Paragon intellect set to %u", (uint32) amount);
         }
@@ -314,13 +321,14 @@ public:
             amount = atoi((char*)args);
         }
 
-        if (amount < 0 || !amount) {
+        if (amount < 0) {
             handler->PSendSysMessage("Invalid amount");
             handler->SetSentErrorMessage(true);
 
             return false;
         }
 
+        player->SetAvailableParagonPoints(player->GetAvailableParagonPoints() + player->GetParagonSpirit());
         const bool didSetStat = player->SetParagonSpirit(amount, false);
         if (didSetStat) {
             handler->PSendSysMessage("Paragon spirit set to  %u", (uint32)amount);
@@ -431,8 +439,9 @@ public:
 
                 if (sCharacterCache->GetCharacterNameByGuid(slot.guid, slot.name))
                 {
-                    target = ObjectAccessor::FindPlayer(slot.guid);
-                    targetName = target->GetName();
+                    if (target = ObjectAccessor::FindPlayer(slot.guid)) {
+                        targetName = target->GetName();
+                    }
                 }
                 
 

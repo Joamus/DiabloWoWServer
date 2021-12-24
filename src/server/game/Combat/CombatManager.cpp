@@ -208,7 +208,7 @@ bool CombatManager::SetInCombatWith(Unit* who)
         Unit* unit = nullptr;
         if (isOwnerPlayer) {
             player = _owner->GetControllingPlayer();
-            unit = who;
+            unit = who->ToCreature();
         }
         else if (isWhoPlayer) {
             player = who->GetControllingPlayer();

@@ -195,8 +195,13 @@ Map::EnterState MapManager::PlayerCannotEnter(uint32 mapid, Player* player, bool
     if (entry->IsDungeon() && (!player->GetGroup() || (player->GetGroup() && !player->GetGroup()->isLFGGroup())))
     {
         uint32 instanceIdToCheck = 0;
-        if (InstanceSave* save = player->GetInstanceSave(mapid, entry->IsRaid()))
+        if (InstanceSave* save = player->GetInstanceSave(mapid, entry->IsRaid())) {
             instanceIdToCheck = save->GetInstanceId();
+            if (save->GetMonsterLevel() != player->GetMonsterLevel()) {
+                return Map::CANNOT_ENTER_INSTANCE_BIND_MONSTER_LEVEL_MISMATCH;
+            }
+        }
+
 
         // instanceId can never be 0 - will not be found
         if (!player->CheckInstanceCount(instanceIdToCheck) && !player->isDead())

@@ -33,6 +33,7 @@
 #include "Player.h"
 #include "Timer.h"
 #include "World.h"
+#include <iostream>
 
 uint16 InstanceSaveManager::ResetTimeDelay[] = {3600, 900, 300, 60};
 
@@ -73,7 +74,7 @@ void InstanceSaveManager::Unload()
 - adding instance into manager
 - called from InstanceMap::Add, _LoadBoundInstances, LoadGroups
 */
-InstanceSave* InstanceSaveManager::AddInstanceSave(uint32 mapId, uint32 instanceId, Difficulty difficulty, time_t resetTime, bool canReset, bool load)
+InstanceSave* InstanceSaveManager::AddInstanceSave(uint32 mapId, uint32 instanceId, Difficulty difficulty, time_t resetTime, bool canReset, bool load, uint16 monsterLevel)
 {
     if (InstanceSave* old_save = GetInstanceSave(instanceId))
         return old_save;
@@ -113,7 +114,7 @@ InstanceSave* InstanceSaveManager::AddInstanceSave(uint32 mapId, uint32 instance
 
     TC_LOG_DEBUG("maps", "InstanceSaveManager::AddInstanceSave: mapid = %d, instanceid = %d", mapId, instanceId);
 
-    InstanceSave* save = new InstanceSave(mapId, instanceId, difficulty, resetTime, canReset);
+    InstanceSave* save = new InstanceSave(mapId, instanceId, difficulty, resetTime, canReset, monsterLevel);
     if (!load)
         save->SaveToDB();
 
@@ -178,9 +179,9 @@ void InstanceSaveManager::UnloadInstanceSave(uint32 InstanceId)
     }
 }
 
-InstanceSave::InstanceSave(uint16 MapId, uint32 InstanceId, Difficulty difficulty, time_t resetTime, bool canReset)
+InstanceSave::InstanceSave(uint16 MapId, uint32 InstanceId, Difficulty difficulty, time_t resetTime, bool canReset, uint16 monsterLevel)
 : m_resetTime(resetTime), m_instanceid(InstanceId), m_mapid(MapId),
-  m_difficulty(difficulty), m_canReset(canReset), m_toDelete(false) { }
+  m_difficulty(difficulty), m_canReset(canReset), m_toDelete(false), monsterLevel(monsterLevel) { }
 
 InstanceSave::~InstanceSave()
 {
@@ -193,6 +194,7 @@ InstanceSave::~InstanceSave()
 */
 void InstanceSave::SaveToDB()
 {
+
     // save instance data too
     std::string data;
     uint32 completedEncounters = 0;
@@ -208,6 +210,8 @@ void InstanceSave::SaveToDB()
         }
     }
 
+
+
     CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_INS_INSTANCE_SAVE);
     stmt->setUInt32(0, m_instanceid);
     stmt->setUInt16(1, GetMapId());
@@ -215,6 +219,9 @@ void InstanceSave::SaveToDB()
     stmt->setUInt8(3, uint8(GetDifficulty()));
     stmt->setUInt32(4, completedEncounters);
     stmt->setString(5, data);
+    stmt->setUInt8(6, GetMonsterLevel());
+
+    std::cout << "AddInstanceSave saveToDB()" << std::endl;
     CharacterDatabase.Execute(stmt);
 }
 

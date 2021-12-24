@@ -336,15 +336,7 @@ class TC_GAME_API Group
         // FG: evil hacks
         void BroadcastGroupUpdate(void);
         uint16 GetMonsterLevel() const { return monsterLevel; }
-        bool SetMonsterLevel(uint16 monsterLevel) {
-            if (monsterLevel > sObjectMgr->GetMaxMonsterLevel()) {
-                return false;
-            }
-            else {
-                this->monsterLevel = monsterLevel;
-            }
-            return true;
-        }
+        bool SetMonsterLevel(uint16 monsterLevel);
 
 
     protected:

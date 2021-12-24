@@ -18819,8 +18819,8 @@ void Player::_LoadBoundInstances(PreparedQueryResult result)
 
     Group* group = GetGroup();
 
-    //         0          1    2           3            4          5
-    // SELECT id, permanent, map, difficulty, extendState, resettime FROM character_instance LEFT JOIN instance ON instance = id WHERE guid = ?
+    //         0          1    2           3            4          5    6
+    // SELECT id, permanent, map, difficulty, extendState, resettime, monster_level FROM character_instance LEFT JOIN instance ON instance = id WHERE guid = ?
     if (result)
     {
         do
@@ -18834,6 +18834,8 @@ void Player::_LoadBoundInstances(PreparedQueryResult result)
             BindExtensionState extendState = BindExtensionState(fields[4].GetUInt8());
 
             time_t resetTime = time_t(fields[5].GetUInt64());
+
+            uint16 monsterLevel = fields[6].GetUInt8();
             // the resettime for normal instances is only saved when the InstanceSave is unloaded
             // so the value read from the DB may be wrong here but only if the InstanceSave is loaded
             // and in that case it is not used
@@ -18884,8 +18886,11 @@ void Player::_LoadBoundInstances(PreparedQueryResult result)
                 continue;
             }
 
+            std::cout << "Load bound" << std::endl;
+            std::cout << "Monster level " + monsterLevel << std::endl;
+
             // since non permanent binds are always solo bind, they can always be reset
-            if (InstanceSave* save = sInstanceSaveMgr->AddInstanceSave(mapId, instanceId, Difficulty(difficulty), resetTime, !perm, true))
+            if (InstanceSave* save = sInstanceSaveMgr->AddInstanceSave(mapId, instanceId, Difficulty(difficulty), resetTime, !perm, true, monsterLevel))
                BindToInstance(save, perm, extendState, true);
         }
         while (result->NextRow());
@@ -18950,7 +18955,8 @@ InstancePlayerBind* Player::BindToInstance(InstanceSave* save, bool permanent, B
 {
     if (save)
     {
-        InstancePlayerBind& bind = m_boundInstances[save->GetDifficulty()][save->GetMapId()];
+        InstancePlayerBind& bind = m_boundInstances[save->GetDifficulty()][save->GetMapId()];   
+
         if (extendState == EXTEND_STATE_KEEP) // special flag, keep the player's current extend state when updating for new boss down
         {
             if (save == bind.save)
@@ -18970,8 +18976,9 @@ InstancePlayerBind* Player::BindToInstance(InstanceSave* save, bool permanent, B
                     stmt->setUInt32(0, save->GetInstanceId());
                     stmt->setBool(1, permanent);
                     stmt->setUInt8(2, extendState);
-                    stmt->setUInt32(3, GetGUID().GetCounter());
-                    stmt->setUInt32(4, bind.save->GetInstanceId());
+                    stmt->setUInt8(3, GetMonsterLevel());
+                    stmt->setUInt32(4, GetGUID().GetCounter());
+                    stmt->setUInt32(5, bind.save->GetInstanceId());
 
                     CharacterDatabase.Execute(stmt);
                 }
@@ -18984,6 +18991,8 @@ InstancePlayerBind* Player::BindToInstance(InstanceSave* save, bool permanent, B
                 stmt->setUInt32(1, save->GetInstanceId());
                 stmt->setBool(2, permanent);
                 stmt->setUInt8(3, extendState);
+                stmt->setUInt8(4, GetMonsterLevel());
+
 
                 CharacterDatabase.Execute(stmt);
             }
@@ -18991,6 +19000,7 @@ InstancePlayerBind* Player::BindToInstance(InstanceSave* save, bool permanent, B
 
         if (bind.save != save)
         {
+
             if (bind.save)
                 bind.save->RemovePlayer(this);
             save->AddPlayer(this);
@@ -19180,6 +19190,7 @@ bool Player::Satisfy(AccessRequirement const* ar, uint32 target_map, bool report
             }
             return false;
         }
+
     }
     return true;
 }

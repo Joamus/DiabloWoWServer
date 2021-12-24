@@ -3434,6 +3434,12 @@ void ObjectMgr::LoadItemTemplates()
 
         // Load cached data
         itemTemplate._LoadTotalAP();
+
+        if (itemTemplate.monsterLevel > 1 && itemTemplate.inheritFromItem > 0) {
+            _itemMonsterLevelContainer.insert(std::make_pair(std::pair<uint32, uint16>(itemTemplate.inheritFromItem, itemTemplate.monsterLevel), itemTemplate));
+        }
+
+         
     } while (result->NextRow());
 
     // Check if item templates for DBC referenced character start outfit are present

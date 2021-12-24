@@ -10987,7 +10987,7 @@ bool Unit::InitTamedPet(Pet* pet, uint8 level, uint32 spell_id)
 
             if (uint32 lootid = creature->GetCreatureTemplate()->lootid) {
                 // TODO: Monster lvl loot
-                loot->FillLoot(lootid, LootTemplates_Creature, looter, false, false, creature->GetLootMode());
+                loot->FillLoot(lootid, LootTemplates_Creature, looter, false, false, creature->GetLootMode(), creatureFromWorld ? creature->GetMonsterLevel() : 1);
             }
 
             if (creature->GetLootMode() > 0) {

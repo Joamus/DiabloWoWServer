@@ -48,7 +48,7 @@ class TC_GAME_API InstanceSave
            - any new instance is being generated
            - the first time a player bound to InstanceId logs in
            - when a group bound to the instance is loaded */
-        InstanceSave(uint16 MapId, uint32 InstanceId, Difficulty difficulty, time_t resetTime, bool canReset);
+        InstanceSave(uint16 MapId, uint32 InstanceId, Difficulty difficulty, time_t resetTime, bool canReset, uint16 monsterLevel);
 
         /* Unloaded when m_playerList and m_groupList become empty
            or when the instance is reset */
@@ -121,6 +121,8 @@ class TC_GAME_API InstanceSave
 
         typedef std::list<Player*> PlayerListType;
         typedef std::list<Group*> GroupListType;
+
+        uint16 GetMonsterLevel() { return monsterLevel; }
     private:
         bool UnloadIfEmpty();
         /* used to flag the InstanceSave as to be deleted, so the caller can delete it */
@@ -140,6 +142,8 @@ class TC_GAME_API InstanceSave
         Difficulty m_difficulty;
         bool m_canReset;
         bool m_toDelete;
+
+        uint16 monsterLevel = 1;
 
         std::mutex _playerListLock;
 };
@@ -206,7 +210,7 @@ class TC_GAME_API InstanceSaveManager
         void Update();
 
         InstanceSave* AddInstanceSave(uint32 mapId, uint32 instanceId, Difficulty difficulty, time_t resetTime,
-            bool canReset, bool load = false);
+            bool canReset, bool load = false, uint16 monsterLevel = 1);
         void RemoveInstanceSave(uint32 InstanceId);
         void UnloadInstanceSave(uint32 InstanceId);
         static void DeleteInstanceFromDB(uint32 instanceid);
@@ -217,6 +221,7 @@ class TC_GAME_API InstanceSaveManager
         uint32 GetNumInstanceSaves() const { return uint32(m_instanceSaveById.size()); }
         uint32 GetNumBoundPlayersTotal() const;
         uint32 GetNumBoundGroupsTotal() const;
+
 
     protected:
         static uint16 ResetTimeDelay[];
@@ -232,6 +237,7 @@ class TC_GAME_API InstanceSaveManager
         // fast lookup for reset times (always use existed functions for access/set)
         ResetTimeByMapDifficultyMap m_resetTimeByMapDifficulty;
         ResetTimeQueue m_resetTimeQueue;
+
 };
 
 #define sInstanceSaveMgr InstanceSaveManager::instance()

@@ -712,6 +712,25 @@ void WorldSession::HandleAreaTriggerOpcode(WorldPacket& recvData)
                     player->SendTransferAborted(at->target_mapId, TRANSFER_ABORT_ZONE_IN_COMBAT);
                     reviveAtTrigger = true;
                     break;
+                case Map::CANNOT_ENTER_INSTANCE_BIND_MONSTER_LEVEL_MISMATCH:
+                    if (MapEntry const* entry = sMapStore.LookupEntry(at->target_mapId))
+                    {
+                       
+                        if (InstanceSave* save = player->GetInstanceSave(at->target_mapId, entry->IsRaid())) {
+                            char const* mapName = entry->MapName[player->GetSession()->GetSessionDbcLocale()];
+                            TC_LOG_DEBUG("maps", "MAP: Player '%s' cannot enter instance map '%s' because they are bound to the instance on monster level %u, but the current monster level is %u", player->GetName().c_str(), mapName, save->GetMonsterLevel(), player->GetMonsterLevel());
+                            // is there a special opcode for this?
+                            // @todo figure out how to get player localized difficulty string (e.g. "10 player", "Heroic" etc)
+                            ChatHandler(player->GetSession()).PSendSysMessage("You cannot enter because you are bound to the instance on monster level %u, but your current monster level is %u", save->GetMonsterLevel(), player->GetMonsterLevel());
+                        }
+                        else {
+                            // Should never happen
+                            TC_LOG_DEBUG("maps", "MAP: Player '%s' was denied entrance to enter an instance because they are bound to the instance on another monster level, but an error occured.", player->GetName().c_str());
+                            player->SendTransferAborted(at->target_mapId, TRANSFER_ABORT_ZONE_IN_COMBAT);
+                        }
+                    }
+                    reviveAtTrigger = true;
+                    break;
                 default:
                     break;
             }
