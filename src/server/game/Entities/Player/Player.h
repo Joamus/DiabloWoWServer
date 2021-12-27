@@ -2577,7 +2577,7 @@ class TC_GAME_API Player : public Unit, public GridObject<Player>
         uint32 paragonPoints;
 
         // Monster level for players is the monster level they wish to engage monsters with. For units it is the monster level they are, which multiplies their stats and enhances loot.
-        uint16 monsterLevel;
+        uint16 monsterLevel = 1;
 };
 
 TC_GAME_API void AddItemsSetItem(Player* player, Item* item);
