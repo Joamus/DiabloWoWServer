@@ -27126,7 +27126,7 @@ void Player::GiveParagonLevel(uint32 level) {
     const bool couldSetLevel = SetParagonLevel(level);
     if (couldSetLevel) {
         paragonPoints += 20;
-        ChatHandler(GetSession()).PSendSysMessage("Congraulations! You leveled up your paragon level!");
+        ChatHandler(GetSession()).PSendSysMessage("Congraulations! You are now paragon level %u!", GetParagonLevel());
         ChatHandler(GetSession()).PSendSysMessage("You have %u available paragon points", GetAvailableParagonPoints());
     } else {
         ChatHandler(GetSession()).SendSysMessage("The paragon level could not be set; it is above the level cap of ", sObjectMgr->GetMaxParagonLevel());
