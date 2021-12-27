@@ -19487,14 +19487,6 @@ void Player::SaveToDB(CharacterDatabaseTransaction trans, bool create /* = false
         stmt->setString(index++, ss.str());
         stmt->setUInt8(index++, GetByteValue(PLAYER_FIELD_BYTES, PLAYER_FIELD_BYTES_OFFSET_ACTION_BAR_TOGGLES));
         stmt->setUInt32(index++, m_grantableLevels);
-        stmt->setUInt32(index++, 0);
-        stmt->setUInt32(index++, 0);
-        stmt->setUInt32(index++, 0);
-        stmt->setUInt32(index++, 0);
-        stmt->setUInt32(index++, 0);
-        stmt->setUInt32(index++, 1);
-        stmt->setUInt32(index++, 0);
-        stmt->setUInt16(index++, 1);
     }
     else
     {
