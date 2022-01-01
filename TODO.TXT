@@ -1,0 +1,6 @@
+- Prevent groups from changing monster level when one member is in combat
+- Announce in chat to all group members when monster level changes
+- Announce in chat to new group members what the monster level is
+- Announce in chat what your monster level is when leaving group
+
+- Make script to add spell power to items as a stat, if the item has stats through a spell. Spell power can be applied as an "on equip" spell on an item, instead of a real stat value, which means it doesn't scale with spell power.
