@@ -462,11 +462,46 @@ public:
                     handler->PSendSysMessage("Player %s is currently in a dungeon, so the monster level cannot be changed.", targetName);
                     handler->SetSentErrorMessage(true);
                     return false;
-                }   
-            }   
-        }
-        if (group) {
+                }
+                if (target->IsInCombat()) {
+                    handler->PSendSysMessage("Player %s is currently in combat, so the monster level cannot be changed.", targetName);
+                    handler->SetSentErrorMessage(true);
+                    return false;
+                }
+            }
+
             group->SetMonsterLevel(amount);
+
+            // It seems a bit silly to loop twice, but we have to know that the monster level can be changed, and then announce it to all group members.
+            for (Group::MemberSlotList::iterator itr = members.begin(); itr != members.end(); ++itr) {
+                Group::MemberSlot& slot = *itr;
+                if (player->GetGUID() == slot.guid) {
+                    continue;
+                }
+
+                Player* target;
+                ObjectGuid targetGuid;
+                std::string targetName;
+
+                // To make sure we get a target, we convert our guid to an omniversal...
+
+                if (sCharacterCache->GetCharacterNameByGuid(slot.guid, slot.name))
+                {
+                    if (target = ObjectAccessor::FindPlayer(slot.guid)) {
+                        targetName = target->GetName();
+                    }
+                }
+
+                uint32 accountId = target ? target->GetSession()->GetAccountId() : sCharacterCache->GetCharacterAccountIdByGuid(targetGuid);
+
+                // find only player from same account if any
+                if (!target)
+                    if (WorldSession* session = sWorld->FindSession(accountId))
+                        target = session->GetPlayer();
+                if (target) {
+                    ChatHandler(target->GetSession()).PSendSysMessage("Group monster level: %u", group->GetMonsterLevel());
+                }
+            }
         }
         else {
             player->SetMonsterLevel(amount);

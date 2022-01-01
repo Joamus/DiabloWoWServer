@@ -41,6 +41,7 @@
 #include "World.h"
 #include "WorldPacket.h"
 #include "WorldSession.h"
+#include "Chat.h"
 
 Roll::Roll(ObjectGuid _guid, LootItem const& li) : itemGUID(_guid), itemid(li.itemid),
 itemRandomPropId(li.randomPropertyId), itemRandomSuffix(li.randomSuffix), itemCount(li.count),
@@ -542,6 +543,8 @@ bool Group::AddMember(Player* player)
     if (m_maxEnchantingLevel < player->GetSkillValue(SKILL_ENCHANTING))
         m_maxEnchantingLevel = player->GetSkillValue(SKILL_ENCHANTING);
 
+    ChatHandler(player->GetSession()).PSendSysMessage("Group monster level: %u", GetMonsterLevel());
+
     return true;
 }
 
@@ -549,11 +552,13 @@ bool Group::RemoveMember(ObjectGuid guid, RemoveMethod const& method /*= GROUP_R
 {
     BroadcastGroupUpdate();
 
+
     sScriptMgr->OnGroupRemoveMember(this, guid, method, kicker, reason);
 
     Player* player = ObjectAccessor::FindConnectedPlayer(guid);
     if (player)
     {
+        ChatHandler(player->GetSession()).PSendSysMessage("Monster level: %u", player->GetMonsterLevel());
         for (GroupReference* itr = GetFirstMember(); itr != nullptr; itr = itr->next())
         {
             if (Player* groupMember = itr->GetSource())
@@ -666,6 +671,7 @@ bool Group::RemoveMember(ObjectGuid guid, RemoveMethod const& method /*= GROUP_R
         }
 
         SendUpdate();
+
 
         if (isLFGGroup() && GetMembersCount() == 1)
         {
