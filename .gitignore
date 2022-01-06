@@ -23,4 +23,5 @@ nbproject/*
 cmake-build-*/
 .vs
 *.user
-sql/TDB_full_world_335.21111_2021_11_15.sql 
+sql/TDB_full_world_335.21111_2021_11_15.sql
+sql/custom/diablo_stuff/entire_database.sql
