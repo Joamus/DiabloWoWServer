@@ -228,6 +228,7 @@ while ($item = $items_stmt -> fetch_assoc()) {
 
 file_put_contents('test-query.sql', "COMMIT;", FILE_APPEND);
 echo "Done!";
+// Comment for git fix
 
 
 function get_value_from_name($type, $str) {
