@@ -1,0 +1,1 @@
+ALTER TABLE world.item_template MODIFY armor INT(10);
