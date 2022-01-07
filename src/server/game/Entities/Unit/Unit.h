@@ -1604,7 +1604,7 @@ class TC_GAME_API Unit : public WorldObject
             return monsterLevel * 1;
         }
         uint32 GetMonsterLevelArmorMultiplier() const {
-            return monsterLevel * 1;
+            return std::ceil(1 + ((monsterLevel - 1) * 0.5));
         }
     private:
         void SetSpeedRateReal(UnitMoveType mtype, float rate);
