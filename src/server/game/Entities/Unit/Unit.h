@@ -1587,25 +1587,12 @@ class TC_GAME_API Unit : public WorldObject
         void SetSpeedRate(UnitMoveType mtype, float rate);
         bool SetMonsterLevel(uint16 monsterLevel);
         uint16 GetMonsterLevel() const { return monsterLevel; }
-        uint32 GetMonsterLevelDamageMultiplier() const {
-            return monsterLevel * 1;
-        };
-        uint32 GetMonsterLevelHealthMultiplier() const {
-            return monsterLevel * 1;
-        };
-        uint32 GetMonsterLevelManaMultiplier() const {
-            return monsterLevel * 1;
-        };
-        uint32 GetMonsterLevelGoldMultiplier() const {
-            return monsterLevel * 1;
-        };
-
-        uint32 GetMonsterLevelXPMultiplier() const {
-            return monsterLevel * 1;
-        }
-        uint32 GetMonsterLevelArmorMultiplier() const {
-            return std::ceil(1 + ((monsterLevel - 1) * 0.5));
-        }
+        uint32 GetMonsterLevelDamageMultiplier() const;
+        uint32 GetMonsterLevelHealthMultiplier() const;
+        uint32 GetMonsterLevelManaMultiplier() const;
+        uint32 GetMonsterLevelGoldMultiplier() const;
+        uint32 GetMonsterLevelXPMultiplier() const;
+        uint32 GetMonsterLevelArmorMultiplier() const;
     private:
         void SetSpeedRateReal(UnitMoveType mtype, float rate);
 

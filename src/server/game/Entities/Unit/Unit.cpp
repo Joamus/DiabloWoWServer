@@ -13772,3 +13772,24 @@ bool Unit::SetMonsterLevel(uint16 monsterLevel) {
 
     return true;
 }
+
+
+uint32 Unit::GetMonsterLevelDamageMultiplier() const {
+    return monsterLevel * 1;
+};
+uint32 Unit::GetMonsterLevelHealthMultiplier() const {
+    return monsterLevel * 1;
+};
+uint32 Unit::GetMonsterLevelManaMultiplier() const {
+    return monsterLevel * 1;
+};
+uint32 Unit::GetMonsterLevelGoldMultiplier() const {
+    return monsterLevel * 1;
+};
+
+uint32 Unit::GetMonsterLevelXPMultiplier() const {
+    return monsterLevel * 1;
+}
+uint32 Unit::GetMonsterLevelArmorMultiplier() const {
+    return std::ceil(1 + ((monsterLevel - 1) * 0.1));
+}
