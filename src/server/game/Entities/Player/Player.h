@@ -1634,7 +1634,7 @@ class TC_GAME_API Player : public Unit, public GridObject<Player>
         float OCTRegenMPPerSpirit() const;
         float GetRatingMultiplier(CombatRating cr) const;
         float GetRatingBonusValue(CombatRating cr) const;
-        uint32 GetBaseSpellPowerBonus() const { return m_baseSpellPower; }
+        uint32 GetBaseSpellPowerBonus(bool getTrueSpellPower = true) const { return m_baseSpellPower + (getTrueSpellPower ? 0 : paragonSpellPower); }
         int32 GetSpellPenetrationItemMod() const { return m_spellPenetrationItemMod; }
 
         bool CanApplyResilience() const override { return true; }
@@ -2195,6 +2195,7 @@ class TC_GAME_API Player : public Unit, public GridObject<Player>
         uint32 GetParagonStamina() const;
         uint32 GetParagonIntellect() const;
         uint32 GetParagonSpirit() const;
+        uint32 GetParagonSpellPower() const;
         uint32 GetParagonLevel() const;
 
         bool SetParagonStrength(uint32 paragonStrength, bool dontUpdateStats);
@@ -2202,6 +2203,7 @@ class TC_GAME_API Player : public Unit, public GridObject<Player>
         bool SetParagonStamina(uint32 paragonStamina, bool dontUpdateStats);
         bool SetParagonIntellect(uint32 paragonIntellect, bool dontUpdateStats);
         bool SetParagonSpirit(uint32 paragonSpirit, bool dontUpdateStats);
+        bool SetParagonSpellPower(uint32 paragonSpellPower, bool dontUpdateStats);
         bool SetParagonLevel(uint32 level);
         void GiveParagonLevel(uint32 level);
         void ResetParagon();
@@ -2572,6 +2574,7 @@ class TC_GAME_API Player : public Unit, public GridObject<Player>
         uint32 paragonStamina;
         uint32 paragonIntellect;
         uint32 paragonSpirit;
+        uint32 paragonSpellPower;
         uint32 paragonLevel;
         uint32 paragonXp;
         uint32 paragonPoints;

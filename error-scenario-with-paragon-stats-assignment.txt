@@ -1,0 +1,19 @@
+
+.para agi all
+agi 40
+available points 20
+= not enough available points
+
+agi 40
+available points 60
+
+.para agi all
+
+agi 60
+available points 40
+= success
+
+.para agi all
+agi 60
+points 100
+= not enough available

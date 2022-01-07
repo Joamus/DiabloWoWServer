@@ -129,6 +129,7 @@ public:
             { "paragon stamina",          HandleParagonStaminaCommand,          rbac::RBAC_PERM_COMMAND_SAVE,          Console::No },
             { "paragon intellect",          HandleParagonIntellectCommand,          rbac::RBAC_PERM_COMMAND_SAVE,          Console::No },
             { "paragon spirit",          HandleParagonSpiritCommand,          rbac::RBAC_PERM_COMMAND_SAVE,          Console::No },
+            { "paragon spellpower",          HandleParagonSpellPowerCommand,          rbac::RBAC_PERM_COMMAND_SAVE,          Console::No },
             { "paragon stats",          HandleParagonStatsCommand,          rbac::RBAC_PERM_COMMAND_SAVE,          Console::No },
             { "paragon reset",          HandleParagonResetCommand,          rbac::RBAC_PERM_COMMAND_SAVE,          Console::No },
             { "mlvl",          HandleMonsterLevelCommand,          rbac::RBAC_PERM_COMMAND_SAVE,          Console::No }
@@ -150,8 +151,9 @@ public:
         }
 
         int amount = 0;
+        bool assignAllPoints = false;
         if (strcmp(args, "all") == 0) {
-            amount += player->GetAvailableParagonPoints();
+            assignAllPoints = true;
         }
         else {
             amount = atoi((char*)args);
@@ -162,9 +164,13 @@ public:
             handler->SetSentErrorMessage(true);
 
             return false;
-        }
+        }       
 
         player->SetAvailableParagonPoints(player->GetAvailableParagonPoints() + player->GetParagonStrength());
+
+        if (assignAllPoints) {
+            amount = player->GetAvailableParagonPoints();
+        }
 
         const bool didSetStat = player->SetParagonStrength(amount, false);
         if (didSetStat) {
@@ -192,8 +198,9 @@ public:
         }
 
         int amount = 0;
+        bool assignAllPoints = false;
         if (strcmp(args, "all") == 0) {
-            amount = player->GetAvailableParagonPoints();
+            assignAllPoints = true;
         }
         else {
             amount = atoi((char*)args);
@@ -207,6 +214,10 @@ public:
         }
 
         player->SetAvailableParagonPoints(player->GetAvailableParagonPoints() + player->GetParagonAgility());
+
+        if (assignAllPoints) {
+            amount = player->GetAvailableParagonPoints();
+        }
 
         const bool didSetStat = player->SetParagonAgility(amount, false);
         if (didSetStat) {
@@ -233,8 +244,9 @@ public:
         }
 
         int amount = 0;
+        bool assignAllPoints = false;
         if (strcmp(args, "all") == 0) {
-            amount = player->GetAvailableParagonPoints();
+            assignAllPoints = true;
         }
         else {
             amount = atoi((char*)args);
@@ -246,6 +258,11 @@ public:
 
             return false;
         }
+
+        if (assignAllPoints) {
+            amount = player->GetAvailableParagonPoints();
+        }
+
         player->SetAvailableParagonPoints(player->GetAvailableParagonPoints() + player->GetParagonStamina());
 
         const bool didSetStat = player->SetParagonStamina(amount, false);
@@ -273,8 +290,9 @@ public:
         }
 
         int amount = 0;
+        bool assignAllPoints = false;
         if (strcmp(args, "all") == 0) {
-            amount = player->GetAvailableParagonPoints();
+            assignAllPoints = true;
         }
         else {
             amount = atoi((char*)args);
@@ -288,6 +306,10 @@ public:
         }
 
         player->SetAvailableParagonPoints(player->GetAvailableParagonPoints() + player->GetParagonIntellect());
+
+        if (assignAllPoints) {
+            amount = player->GetAvailableParagonPoints();
+        }
         const bool didSetStat = player->SetParagonIntellect(amount, false);
 
         if (didSetStat) {
@@ -314,6 +336,7 @@ public:
         }
 
         int amount = 0;
+        bool assignAllPoints = false;
         if (strcmp(args, "all") == 0) {
             amount = player->GetAvailableParagonPoints();
         }
@@ -329,9 +352,60 @@ public:
         }
 
         player->SetAvailableParagonPoints(player->GetAvailableParagonPoints() + player->GetParagonSpirit());
+
+        if (assignAllPoints) {
+            amount = player->GetAvailableParagonPoints();
+        }
+
         const bool didSetStat = player->SetParagonSpirit(amount, false);
         if (didSetStat) {
-            handler->PSendSysMessage("Paragon spirit set to  %u", (uint32)amount);
+            handler->PSendSysMessage("Paragon spirit set to %u", (uint32)amount);
+        }
+        else {
+            handler->SendSysMessage("Not enough available paragon points");
+            handler->SetSentErrorMessage(true);
+
+        }
+        return didSetStat;
+    }
+
+    static bool HandleParagonSpellPowerCommand(ChatHandler* handler, char const* args) {
+        if (!*args)
+            return false;
+
+        Player* player = handler->GetSession()->GetPlayer();
+
+        if (player->IsInCombat()) {
+            handler->SendSysMessage("Cannot set paragon stats during combat");
+            handler->SetSentErrorMessage(true);
+            return false;
+        }
+
+        int amount = 0;
+        bool assignAllPoints = false;
+        if (strcmp(args, "all") == 0) {
+            amount = player->GetAvailableParagonPoints();
+        }
+        else {
+            amount = atoi((char*)args);
+        }
+
+        if (amount < 0) {
+            handler->PSendSysMessage("Invalid amount");
+            handler->SetSentErrorMessage(true);
+
+            return false;
+        }
+
+        player->SetAvailableParagonPoints(player->GetAvailableParagonPoints() + player->GetParagonSpellPower());
+
+        if (assignAllPoints) {
+            amount = player->GetAvailableParagonPoints();
+        }
+
+        const bool didSetStat = player->SetParagonSpellPower(amount, false);
+        if (didSetStat) {
+            handler->PSendSysMessage("Paragon spellpower set to %u", (uint32)amount);
         }
         else {
             handler->SendSysMessage("Not enough available paragon points");
@@ -374,6 +448,8 @@ public:
         handler->PSendSysMessage("Stamina: %u", player->GetParagonStamina());
         handler->PSendSysMessage("Intellect: %u", player->GetParagonIntellect());
         handler->PSendSysMessage("Spirit: %u", player->GetParagonSpirit());
+        handler->PSendSysMessage("Spell power: %u", player->GetParagonSpellPower());
+
         handler->PSendSysMessage("Available points: %u", player->GetAvailableParagonPoints());
 
 

@@ -7004,7 +7004,7 @@ int32 Unit::SpellBaseDamageBonusDone(SpellSchoolMask schoolMask) const
     if (GetTypeId() == TYPEID_PLAYER)
     {
         // Base value
-        DoneAdvertisedBenefit += ToPlayer()->GetBaseSpellPowerBonus();
+        DoneAdvertisedBenefit += ToPlayer()->GetBaseSpellPowerBonus(false);
 
         // Damage bonus from stats
         AuraEffectList const& mDamageDoneOfStatPercent = GetAuraEffectsByType(SPELL_AURA_MOD_SPELL_DAMAGE_OF_STAT_PERCENT);
@@ -7627,7 +7627,7 @@ int32 Unit::SpellBaseHealingBonusDone(SpellSchoolMask schoolMask) const
     if (GetTypeId() == TYPEID_PLAYER)
     {
         // Base value
-        advertisedBenefit += ToPlayer()->GetBaseSpellPowerBonus();
+        advertisedBenefit += ToPlayer()->GetBaseSpellPowerBonus(false);
 
         // Healing bonus from stats
         AuraEffectList const& mHealingDoneOfStatPercent = GetAuraEffectsByType(SPELL_AURA_MOD_SPELL_HEALING_OF_STAT_PERCENT);

@@ -17848,6 +17848,7 @@ bool Player::LoadFromDB(ObjectGuid guid, CharacterDatabaseQueryHolder const& hol
     paragonXp = fields[79].GetUInt32();
     paragonPoints = fields[80].GetUInt32();
     monsterLevel = fields[81].GetUInt16();
+    paragonSpellPower = fields[82].GetUInt32();
 
     UpdateAllStats();
 
@@ -19624,6 +19625,7 @@ void Player::SaveToDB(CharacterDatabaseTransaction trans, bool create /* = false
         stmt->setUInt32(index++, GetParagonXP());
         stmt->setUInt32(index++, GetAvailableParagonPoints());
         stmt->setUInt16(index++, GetMonsterLevel(true));
+        stmt->setUInt16(index++, GetParagonSpellPower());
 
         // Index
         stmt->setUInt32(index++, GetGUID().GetCounter());
@@ -27044,7 +27046,7 @@ GameClient* Player::GetGameClient() const
     return GetSession()->GetGameClient();
 }
 bool Player::SetParagonStrength(uint32 paragonStrength, bool dontUpdateStats = false) {
-    if (paragonPoints >= paragonStrength - this->paragonStrength) {
+    if ((int) paragonPoints >= paragonStrength - (int) this->paragonStrength) {
         this->paragonStrength = paragonStrength;
         paragonPoints -= this->paragonStrength;
         if (!dontUpdateStats) {
@@ -27056,7 +27058,7 @@ bool Player::SetParagonStrength(uint32 paragonStrength, bool dontUpdateStats = f
 }
 
 bool Player::SetParagonAgility(uint32 paragonAgility, bool dontUpdateStats = false) {
-    if (paragonPoints >= paragonAgility - this->paragonAgility) {
+    if ((int) paragonPoints >= (int) paragonAgility - (int) this->paragonAgility) {
         this->paragonAgility = paragonAgility;
         paragonPoints -= this->paragonAgility;
 
@@ -27068,7 +27070,7 @@ bool Player::SetParagonAgility(uint32 paragonAgility, bool dontUpdateStats = fal
     return false;
 }
 bool Player::SetParagonStamina(uint32 paragonStamina, bool dontUpdateStats = false) {
-    if (paragonPoints >= paragonStamina - this->paragonStamina) {
+    if ((int) paragonPoints >= (int) paragonStamina - (int) this->paragonStamina) {
         this->paragonStamina = paragonStamina;
         paragonPoints -= this->paragonStamina;
 
@@ -27080,7 +27082,7 @@ bool Player::SetParagonStamina(uint32 paragonStamina, bool dontUpdateStats = fal
     return false;
 }
 bool Player::SetParagonIntellect(uint32 paragonIntellect, bool dontUpdateStats = false) {
-    if (paragonPoints >= paragonIntellect - this->paragonIntellect) {
+    if ((int) paragonPoints >= (int) paragonIntellect - (int) this->paragonIntellect) {
         this->paragonIntellect = paragonIntellect;
         paragonPoints -= this->paragonIntellect;
 
@@ -27092,9 +27094,21 @@ bool Player::SetParagonIntellect(uint32 paragonIntellect, bool dontUpdateStats =
     return false;
 }
 bool Player::SetParagonSpirit(uint32 paragonSpirit, bool dontUpdateStats = false) {
-    if (paragonPoints >= paragonSpirit - this->paragonSpirit) {
+    if ((int) paragonPoints >= (int) paragonSpirit - (int) this->paragonSpirit) {
         this->paragonSpirit = paragonSpirit;
         paragonPoints -= this->paragonSpirit;
+
+        if (!dontUpdateStats) {
+            UpdateAllStats();
+        }
+        return true;
+    }
+    return false;
+}
+bool Player::SetParagonSpellPower(uint32 paragonSpellPower, bool dontUpdateStats = false) {
+    if ((int)paragonPoints >= (int)paragonSpellPower - (int)this->paragonSpellPower) {
+        this->paragonSpellPower = paragonSpellPower;
+        paragonPoints -= this->paragonSpellPower;
 
         if (!dontUpdateStats) {
             UpdateAllStats();
@@ -27146,12 +27160,14 @@ void Player::ResetParagon() {
     paragonPoints += paragonIntellect;
     paragonPoints += paragonStamina;
     paragonPoints += paragonSpirit;
+    paragonPoints += paragonSpellPower;
 
     paragonStrength = 0;
     paragonAgility = 0;
     paragonIntellect = 0;
     paragonStamina = 0;
     paragonSpirit = 0;
+    paragonSpellPower = 0;
 
     UpdateAllStats();
 }
@@ -27162,6 +27178,7 @@ uint32 Player::GetParagonAgility() const { return paragonAgility; }
 uint32 Player::GetParagonStamina() const { return paragonStamina; }
 uint32 Player::GetParagonIntellect() const { return paragonIntellect; }
 uint32 Player::GetParagonSpirit() const { return paragonSpirit; }
+uint32 Player::GetParagonSpellPower() const { return paragonSpellPower; }
 uint32 Player::GetParagonLevel() const { return paragonLevel; }
 
 
