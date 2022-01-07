@@ -891,7 +891,7 @@ class TC_GAME_API Unit : public WorldObject
 
         float GetStat(Stats stat) const { return float(GetUInt32Value(UNIT_FIELD_STAT0+stat)); }
         virtual void SetStat(Stats stat, int32 val) { SetStatInt32Value(UNIT_FIELD_STAT0+stat, val); }
-        uint32 GetArmor() const { return GetResistance(SPELL_SCHOOL_NORMAL); }
+        uint32 GetArmor() const { return GetResistance(SPELL_SCHOOL_NORMAL) * GetMonsterLevelArmorMultiplier(); }
         void SetArmor(int32 val) { SetResistance(SPELL_SCHOOL_NORMAL, val); }
 
         uint32 GetResistance(SpellSchools school) const { return GetUInt32Value(UNIT_FIELD_RESISTANCES+school); }
@@ -1601,6 +1601,9 @@ class TC_GAME_API Unit : public WorldObject
         };
 
         uint32 GetMonsterLevelXPMultiplier() const {
+            return monsterLevel * 1;
+        }
+        uint32 GetMonsterLevelArmorMultiplier() const {
             return monsterLevel * 1;
         }
     private:
