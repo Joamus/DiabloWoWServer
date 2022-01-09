@@ -972,6 +972,21 @@ bool Unit::HasBreakableByDamageCrowdControlAura(Unit* excludeCasterChannel) cons
     if (victim->GetStandState() && victim->IsPlayer())
         victim->SetStandState(UNIT_STAND_STATE_STAND);
 
+    //if (attacker->IsAlive() && attacker->IsPlayer())
+    //{
+    //    Player* attackerAsPlayer = attacker->ToPlayer();
+    //    if (attackerAsPlayer->GetParagonLifesteal() > 0) {
+    //        uint32 healthGain = damage;
+
+    //       /* healthGain = unitCaster->SpellHealingBonusDone(unitCaster, m_spellInfo, healthGain, HEAL, *effectInfo, { });
+    //        healthGain = unitCaster->SpellHealingBonusTaken(unitCaster, m_spellInfo, healthGain, HEAL);*/
+
+    //        HealInfo healInfo(attacker, attacker, healthGain, m_spellInfo, m_spellSchoolMask);
+    //        unitCaster->HealBySpell(healInfo);
+
+    //    }
+    //}
+
     return damage;
 }
 

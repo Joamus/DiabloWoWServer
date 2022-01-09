@@ -27131,7 +27131,7 @@ void Player::GiveParagonLevel(uint32 level) {
 
     const bool couldSetLevel = SetParagonLevel(level);
     if (couldSetLevel) {
-        paragonPoints += 20;
+        paragonPoints += 50;
         ChatHandler(GetSession()).PSendSysMessage("Congraulations! You are now paragon level %u!", GetParagonLevel());
         ChatHandler(GetSession()).PSendSysMessage("You have %u available paragon points", GetAvailableParagonPoints());
     } else {

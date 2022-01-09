@@ -26,7 +26,7 @@ $queries = [];
 // Filter all rows that contain proprety "str" with either "increase healing" or "increase spell dam" (lower case)
 // Regex the strs number, so you know how much spell damage it gives
 $stat_list = array(
-    "SPELL_POWER" => array("id" => 45, "spell_name" => "increase spell dam", "factor" => 1,
+    "SPELL_POWER" => array("id" => 45, "spell_name" => "increase spell dam", "factor" => 1 * 1.5,
         "fixed_spell_values" => array(
             33638 => 157,
             32706 => 0,
@@ -41,16 +41,16 @@ $stat_list = array(
             28890 => 0
         )
     ),
-    "ARMOR_PENETRATION" => array("id" => 44, "spell_name" => "armor penetration", "factor" => 0.14,
-        "fixed_spell_values" => array(
-            34106 => 85,
-            37173 => 0,
-            40934 => 40,
-            42109 => 45,
-            53793 => 43,
-        )
-    ),
-    "HEAL_POWER" => array("id" => 45, "spell_name" => "increase healing", "factor" => 0.55,
+    // "ARMOR_PENETRATION" => array("id" => 44, "spell_name" => "armor penetration", "factor" => 0.14,
+    //     "fixed_spell_values" => array(
+    //         34106 => 85,
+    //         37173 => 0,
+    //         40934 => 40,
+    //         42109 => 45,
+    //         53793 => 43,
+    //     )
+    // ),
+    "HEAL_POWER" => array("id" => 45, "spell_name" => "increase healing", "factor" => 0.55 * 1.5,
         "fixed_spell_values" => array(
             32701 => 0
         )
