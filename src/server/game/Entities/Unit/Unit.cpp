@@ -972,18 +972,16 @@ bool Unit::HasBreakableByDamageCrowdControlAura(Unit* excludeCasterChannel) cons
     if (victim->GetStandState() && victim->IsPlayer())
         victim->SetStandState(UNIT_STAND_STATE_STAND);
 
-    //if (attacker->IsAlive() && attacker->IsPlayer())
+    //std::cout << "Damaging mob: " << std::endl;
+
+    //if (attacker && attacker->IsAlive() && (attacker->IsPlayer() || attacker->IsPet() && attacker->IsControlledByPlayer()))
     //{
-    //    Player* attackerAsPlayer = attacker->ToPlayer();
+    //    Player* attackerAsPlayer = attacker->IsPet() ? attacker->GetOwner()->ToPlayer() : attacker->ToPlayer();
     //    if (attackerAsPlayer->GetParagonLifesteal() > 0) {
-    //        uint32 healthGain = damage;
-
-    //       /* healthGain = unitCaster->SpellHealingBonusDone(unitCaster, m_spellInfo, healthGain, HEAL, *effectInfo, { });
-    //        healthGain = unitCaster->SpellHealingBonusTaken(unitCaster, m_spellInfo, healthGain, HEAL);*/
-
-    //        HealInfo healInfo(attacker, attacker, healthGain, m_spellInfo, m_spellSchoolMask);
-    //        unitCaster->HealBySpell(healInfo);
-
+    //        uint32 healthGain = damage * (attackerAsPlayer->GetParagonLifesteal() * 0.01 * 0.01); // In percent
+    //        std::cout << "Health gain is: " << std::endl;
+    //        std::cout << healthGain << std::endl;
+    //        attackerAsPlayer->ModifyHealth((int32) healthGain);
     //    }
     //}
 
@@ -13790,22 +13788,36 @@ bool Unit::SetMonsterLevel(uint16 monsterLevel) {
 
 
 uint32 Unit::GetMonsterLevelDamageMultiplier() const {
-    return monsterLevel * 1;
+    return std::ceil(1 + ((monsterLevel - 1) * GetMonsterLevelDungeonModifier()));
 };
 uint32 Unit::GetMonsterLevelHealthMultiplier() const {
-    return monsterLevel * 1;
+    return std::ceil(1 + ((monsterLevel - 1) * GetMonsterLevelDungeonModifier()));
 };
 uint32 Unit::GetMonsterLevelManaMultiplier() const {
-    return monsterLevel * 1;
+    return std::ceil(1 + ((monsterLevel - 1) * GetMonsterLevelDungeonModifier()));
 };
 uint32 Unit::GetMonsterLevelGoldMultiplier() const {
-    return monsterLevel * 1;
+    //return std::ceil(1 + ((monsterLevel - 1) * GetMonsterLevelDungeonModifier()));
+    return monsterLevel;
 };
 
 uint32 Unit::GetMonsterLevelXPMultiplier() const {
-    return monsterLevel * 1;
+    return monsterLevel;
 }
 uint32 Unit::GetMonsterLevelArmorMultiplier() const {
     return 1;
-    //return std::ceil(1 + ((monsterLevel - 1) * 0.15));
+    //return std::ceil(1 + ((monsterLevel - 1) * GetMonsterLevelDungeonModifier()));
+}
+
+float Unit::GetMonsterLevelDungeonModifier() const {
+    if (GetMap()->Is25ManRaid()) {
+        return 0.5;
+    }
+    if (GetMap()->IsRaid()) {
+        return 0.75;
+    }
+    if (GetMap()->IsNonRaidDungeon()) {
+        return 0.9;
+    }
+    return 1;
 }

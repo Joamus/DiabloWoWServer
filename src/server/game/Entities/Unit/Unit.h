@@ -1593,6 +1593,7 @@ class TC_GAME_API Unit : public WorldObject
         uint32 GetMonsterLevelGoldMultiplier() const;
         uint32 GetMonsterLevelXPMultiplier() const;
         uint32 GetMonsterLevelArmorMultiplier() const;
+        float GetMonsterLevelDungeonModifier() const;
     private:
         void SetSpeedRateReal(UnitMoveType mtype, float rate);
 
