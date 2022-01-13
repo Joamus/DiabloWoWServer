@@ -1499,6 +1499,11 @@ void World::LoadConfigSettings(bool reload)
     m_float_configs[CONFIG_STATS_LIMITS_BLOCK] = sConfigMgr->GetFloatDefault("Stats.Limits.Block", 95.0f);
     m_float_configs[CONFIG_STATS_LIMITS_CRIT] = sConfigMgr->GetFloatDefault("Stats.Limits.Crit", 95.0f);
 
+    m_float_configs[MONSTER_LEVEL_25_MAN_DIFFICULTY] = sConfigMgr->GetFloatDefault("MonsterLevel.Difficulty.25Man", 0.5f);
+    m_float_configs[MONSTER_LEVEL_10_MAN_DIFFICULTY] = sConfigMgr->GetFloatDefault("MonsterLevel.Difficulty.10Man", 0.75f);
+    m_float_configs[MONSTER_LEVEL_5_MAN_DIFFICULTY] = sConfigMgr->GetFloatDefault("MonsterLevel.Difficulty.5Man", 0.9f);
+    m_int_configs[MAX_PARAGON_LIFESTEAL] = sConfigMgr->GetIntDefault("Paragon.Limits.Lifesteal", 20);
+
     //packet spoof punishment
     m_int_configs[CONFIG_PACKET_SPOOF_POLICY] = sConfigMgr->GetIntDefault("PacketSpoof.Policy", (uint32)WorldSession::DosProtection::POLICY_KICK);
     m_int_configs[CONFIG_PACKET_SPOOF_BANMODE] = sConfigMgr->GetIntDefault("PacketSpoof.BanMode", (uint32)BAN_ACCOUNT);

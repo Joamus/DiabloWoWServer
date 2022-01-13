@@ -13811,13 +13811,13 @@ uint32 Unit::GetMonsterLevelArmorMultiplier() const {
 
 float Unit::GetMonsterLevelDungeonModifier() const {
     if (GetMap()->Is25ManRaid()) {
-        return 0.5;
+        return sWorld->getFloatConfig(MONSTER_LEVEL_25_MAN_DIFFICULTY);
     }
     if (GetMap()->IsRaid()) {
-        return 0.75;
+        return sWorld->getFloatConfig(MONSTER_LEVEL_10_MAN_DIFFICULTY);
     }
     if (GetMap()->IsNonRaidDungeon()) {
-        return 0.9;
+        return sWorld->getFloatConfig(MONSTER_LEVEL_5_MAN_DIFFICULTY);
     }
-    return 1;
+    return 1.0f;
 }

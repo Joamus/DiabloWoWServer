@@ -26,7 +26,7 @@ $queries = [];
 // Filter all rows that contain proprety "str" with either "increase healing" or "increase spell dam" (lower case)
 // Regex the strs number, so you know how much spell damage it gives
 $stat_list = array(
-    "SPELL_POWER" => array("id" => 45, "spell_name" => "increase spell dam", "factor" => 1 * 1.5,
+    "SPELL_POWER" => array("id" => 45, "spell_name" => "increase spell dam", "factor" => 1,
         "fixed_spell_values" => array(
             33638 => 157,
             32706 => 0,
@@ -41,16 +41,16 @@ $stat_list = array(
             28890 => 0
         )
     ),
-    // "ARMOR_PENETRATION" => array("id" => 44, "spell_name" => "armor penetration", "factor" => 0.14,
-    //     "fixed_spell_values" => array(
-    //         34106 => 85,
-    //         37173 => 0,
-    //         40934 => 40,
-    //         42109 => 45,
-    //         53793 => 43,
-    //     )
-    // ),
-    "HEAL_POWER" => array("id" => 45, "spell_name" => "increase healing", "factor" => 0.55 * 1.5,
+    "ARMOR_PENETRATION" => array("id" => 44, "spell_name" => "armor penetration", "factor" => 0.14,
+        "fixed_spell_values" => array(
+            34106 => 85,
+            37173 => 0,
+            40934 => 40,
+            42109 => 45,
+            53793 => 43,
+        )
+    ),
+    "HEAL_POWER" => array("id" => 45, "spell_name" => "increase healing", "factor" => 0.55,
         "fixed_spell_values" => array(
             32701 => 0
         )
@@ -174,7 +174,7 @@ while ($item = $items_stmt -> fetch_assoc()) {
             if ($stat_value_exists == true) {
                 $stat_id = $stat_element["id"];
                 $stat_value = $stat_element["fixed_spell_values"][$spell_id];
-                $stat_value = $stat_value * ($monster_level - 1);
+                $stat_value = $stat_value * ($monster_level - 1) * get_quality_multiplier($stat_element["Quality"]);
             } else if (strpos(strtolower($spell_name_from_dbc), $stat_element["spell_name"]) !== false) {
                 $stat_value = preg_replace("/[^0-9]/", "", $spell_name_from_dbc);
                 if (!is_numeric($stat_value)) {
@@ -185,10 +185,15 @@ while ($item = $items_stmt -> fetch_assoc()) {
                     $stat_value = intval($stat_value);
                 }
                 $stat_id = $stat_element["id"];
-                $stat_value = ($stat_value * $stat_element["factor"]) * ($monster_level - 1);
+                $stat_value = ($stat_value * $stat_element["factor"]) * ($monster_level - 1) * get_quality_multiplier($stat_element["Quality"]);;
+            }
+            if ($stat_id == 45) {
+                $stat_value = $stat_value * 1.3;
+            } else {
+                $stat_value = $stat_value * 1.1;
             }
         }
-        // The stats in the predefined list means with value 0 that they should be ignored.
+        // The stats in the predefined list with value 0 should be ignored.
         if ($stat_value > 0) {
             // Make if to check that the item does not already have the stat in one of its stat values - makes it safe to run this script twice.
             // It will mean that if an item already has +spell power as a stat, but also as a spell, we will skip it.
@@ -235,9 +240,6 @@ function get_value_from_name($type, $str) {
     global $stat_list;
     $start_string = $stat_list[$type]["spell_name"];
     $str = strtolower($str);
-
-    
-    // Now loop over every character after the beginning string, so e.g after "increase healing"
 }
 
 function get_next_stat_column_key($item) {
@@ -248,4 +250,14 @@ function get_next_stat_column_key($item) {
         }
     }
     return null;
+}
+
+function get_quality_multiplier($quality) {
+    if ($quality < 4) {
+        return 1;
+    } else if ($quality == 4 || $quality == 5) {
+        return 1.1;
+    } else {
+        return 1;
+    }
 }

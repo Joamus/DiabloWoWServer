@@ -14,9 +14,13 @@ $mysqli = new mysqli("localhost", "trinity", "trinity", "world");
 $mysqli_for_deletes = new mysqli("localhost", "trinity", "trinity", "world");
 
 // Drop items with monster lvl above 1 - it means this has been run before, so we just want to remake the items and not have duplicates
-$date = gmdate('Y-m-d h:i:s \G\M\T');
+$date = gmdate('Y_m_d');
 
-$mysqli->query("CREATE TABLE IF NOT EXISTS world.item_template_backup_$date  LIKE world.item_template; INSERT INTO world.item_template_backup_$date SELECT * FROM world.item_template;");
+// echo "CREATE TABLE IF NOT EXISTS world.item_template_backup_$date LIKE world.item_template; INSERT INTO world.item_template_backup_$date SELECT * FROM world.item_template;";
+// exit;
+
+$mysqli->query("CREATE TABLE IF NOT EXISTS world.item_template_backup_$date LIKE world.item_template;");
+$mysqli->query("INSERT INTO world.item_template_backup_$date SELECT * FROM world.item_template;");
 // $mysqli->query("DELETE FROM world.item_template WHERE monster_level > 1 AND inherit_from_item IS NOT NULL;");
 
 // Fetch items
@@ -100,31 +104,27 @@ function makeItem($entry, $row, $monster_level) {
     $new_item = array(
         "entry" => (int) $entry, //entry
         "name" => $row["name"] . " [MLVL $monster_level]",
-        "BuyPrice" => ((int) $row["BuyPrice"]) * getGoldMultiplier($monster_level), 
-        "SellPrice" => ((int) $row["SellPrice"]) * getGoldMultiplier($monster_level), 
-        "stat_value1" => ((int) $row["stat_value1"]) * getStatMultiplier($monster_level, $row["stat_type1"]),
-        "stat_value2" => ((int) $row["stat_value2"]) * getStatMultiplier($monster_level, $row["stat_type2"]),
-        "stat_value3" => ((int) $row["stat_value3"]) * getStatMultiplier($monster_level, $row["stat_type3"]), 
-        "stat_value4" => ((int) $row["stat_value4"]) * getStatMultiplier($monster_level, $row["stat_type4"]),
-        "stat_value5" => ((int) $row["stat_value5"]) * getStatMultiplier($monster_level, $row["stat_type5"]),
-        "stat_value6" => ((int) $row["stat_value6"]) * getStatMultiplier($monster_level, $row["stat_type6"]),
-        "stat_value7" => ((int) $row["stat_value7"]) * getStatMultiplier($monster_level, $row["stat_type7"]),
-        "stat_value8" => ((int) $row["stat_value8"]) * getStatMultiplier($monster_level, $row["stat_type8"]),
-        "stat_value9" => ((int) $row["stat_value9"]) * getStatMultiplier($monster_level, $row["stat_type9"]),
-        "stat_value10" => ((int) $row["stat_value10"]) * getStatMultiplier($monster_level, $row["stat_type10"]),
-        "dmg_min1" => ((int) $row["dmg_min1"]) * getWepDamageMultiplier($monster_level),
-        "dmg_max1" => ((int) $row["dmg_max1"]) * getWepDamageMultiplier($monster_level),
-        "dmg_min2" => ((int) $row["dmg_min2"]) * getWepDamageMultiplier($monster_level),
-        "dmg_max2" => ((int) $row["dmg_max2"]) * getWepDamageMultiplier($monster_level),
-        "armor" => ((int) $row["armor"]) * getArmorBlockMultiplier($monster_level),
-        "block" => ((int) $row["block"]) * getArmorBlockMultiplier($monster_level),
+        "BuyPrice" => ((int) $row["BuyPrice"]) * getGoldMultiplier($monster_level) * getQualityMultiplier($row["Quality"]), 
+        "SellPrice" => ((int) $row["SellPrice"]) * getGoldMultiplier($monster_level) * getQualityMultiplier($row["Quality"]), 
+        "stat_value1" => ((int) $row["stat_value1"]) * getStatMultiplier($monster_level, $row["stat_type1"]) * getQualityMultiplier($row["Quality"]),
+        "stat_value2" => ((int) $row["stat_value2"]) * getStatMultiplier($monster_level, $row["stat_type2"]) * getQualityMultiplier($row["Quality"]),
+        "stat_value3" => ((int) $row["stat_value3"]) * getStatMultiplier($monster_level, $row["stat_type3"]) * getQualityMultiplier($row["Quality"]), 
+        "stat_value4" => ((int) $row["stat_value4"]) * getStatMultiplier($monster_level, $row["stat_type4"]) * getQualityMultiplier($row["Quality"]),
+        "stat_value5" => ((int) $row["stat_value5"]) * getStatMultiplier($monster_level, $row["stat_type5"]) * getQualityMultiplier($row["Quality"]),
+        "stat_value6" => ((int) $row["stat_value6"]) * getStatMultiplier($monster_level, $row["stat_type6"]) * getQualityMultiplier($row["Quality"]),
+        "stat_value7" => ((int) $row["stat_value7"]) * getStatMultiplier($monster_level, $row["stat_type7"]) * getQualityMultiplier($row["Quality"]),
+        "stat_value8" => ((int) $row["stat_value8"]) * getStatMultiplier($monster_level, $row["stat_type8"]) * getQualityMultiplier($row["Quality"]),
+        "stat_value9" => ((int) $row["stat_value9"]) * getStatMultiplier($monster_level, $row["stat_type9"]) * getQualityMultiplier($row["Quality"]),
+        "stat_value10" => ((int) $row["stat_value10"]) * getStatMultiplier($monster_level, $row["stat_type10"]) * getQualityMultiplier($row["Quality"]),
+        "dmg_min1" => ((int) $row["dmg_min1"]) * getWepDamageMultiplier($monster_level) * getQualityMultiplier($row["Quality"]),
+        "dmg_max1" => ((int) $row["dmg_max1"]) * getWepDamageMultiplier($monster_level) * getQualityMultiplier($row["Quality"]),
+        "dmg_min2" => ((int) $row["dmg_min2"]) * getWepDamageMultiplier($monster_level) * getQualityMultiplier($row["Quality"]),
+        "dmg_max2" => ((int) $row["dmg_max2"]) * getWepDamageMultiplier($monster_level) * getQualityMultiplier($row["Quality"]),
+        "armor" => ((int) $row["armor"]) * getArmorBlockMultiplier($monster_level) * getQualityMultiplier($row["Quality"]),
+        "block" => ((int) $row["block"]) * getArmorBlockMultiplier($monster_level) * getQualityMultiplier($row["Quality"]),
         "inherit_from_item" => (int) $row["entry"],
         "monster_level" => (int) $monster_level
     );
-
-    if($new_item["stat_value1"] > 32000) {
-        echo $new_item["inherit_from_item"];
-    }
 
     $values = [];
 
@@ -142,16 +142,14 @@ function makeItem($entry, $row, $monster_level) {
 
 
 function getWepDamageMultiplier($monster_level) {
-    return $monster_level * 1;
+    return $monster_level * 1.1;
 }
 
 function getStatMultiplier($monster_level, $stat_type_id) {
-    if ($stat_type_id == 44) {
-        return 1;
-    } else if ($stat_type_id == 45) {
-        return $monster_level * 1.5;
+    if ($stat_type_id == 45) {
+        return $monster_level * 1.3;
     }
-    return $monster_level * 1;
+    return $monster_level * 1.1;
 }
 
 function getGoldMultiplier($monster_level) {
@@ -161,7 +159,17 @@ function getGoldMultiplier($monster_level) {
 
 function getArmorBlockMultiplier($monster_level) {
     // return (int) ceil(1 + (($monster_level-1) * 0.5));
-    return $monster_level * 1;
+    return $monster_level * 1.1;
+}
+
+function getQualityMultiplier($quality) {
+    if ($quality < 4) {
+        return 1;
+    } else if ($quality == 4 || $quality == 5) {
+        return 1.1;
+    } else {
+        return 1;
+    }
 }
 
 ?>

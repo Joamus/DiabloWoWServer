@@ -2197,6 +2197,7 @@ class TC_GAME_API Player : public Unit, public GridObject<Player>
         uint32 GetParagonSpirit() const;
         uint32 GetParagonSpellPower() const;
         uint32 GetParagonLevel() const;
+        uint32 GetParagonLifesteal() const;
 
         bool SetParagonStrength(uint32 paragonStrength, bool dontUpdateStats);
         bool SetParagonAgility(uint32 paragonAgility, bool dontUpdateStats);
@@ -2204,6 +2205,7 @@ class TC_GAME_API Player : public Unit, public GridObject<Player>
         bool SetParagonIntellect(uint32 paragonIntellect, bool dontUpdateStats);
         bool SetParagonSpirit(uint32 paragonSpirit, bool dontUpdateStats);
         bool SetParagonSpellPower(uint32 paragonSpellPower, bool dontUpdateStats);
+        bool SetParagonLifesteal(uint32 paragonLifesteal, bool dontUpdateStats);
         bool SetParagonLevel(uint32 level);
         void GiveParagonLevel(uint32 level);
         void ResetParagon();
@@ -2214,7 +2216,7 @@ class TC_GAME_API Player : public Unit, public GridObject<Player>
         }
         uint32 GetParagonXP() const { return paragonXp; }
         void SetParagonXP(uint32 newXP) { paragonXp = newXP; }
-        bool IsMaxParagonLevel() const { return paragonLevel >= 100; }
+        bool IsMaxParagonLevel() const { return paragonLevel >= sObjectMgr->GetMaxParagonLevel(); }
 
         // Monster level for players is the monster level they wish to engage monsters with. For units it is the monster level they are, which multiplies their stats and enhances loot.
         uint16 GetMonsterLevel(bool personalMonsterLevel = false) const {
@@ -2575,6 +2577,7 @@ class TC_GAME_API Player : public Unit, public GridObject<Player>
         uint32 paragonIntellect;
         uint32 paragonSpirit;
         uint32 paragonSpellPower;
+        uint32 paragonLifesteal;
         uint32 paragonLevel;
         uint32 paragonXp;
         uint32 paragonPoints;

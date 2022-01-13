@@ -4125,3 +4125,18 @@ Metric.OverallStatusInterval = 1
 
 #
 ###################################################################################################
+
+
+###################################################################################################
+# MONSTER LEVEL SETTINGS
+
+MonsterLevel.Difficulty.25Man = 0.5
+MonsterLevel.Difficulty.10Man = 0.75
+MonsterLevel.Difficulty.5Man = 0.9
+
+###################################################################################################
+
+# PARAGON STATS SETTINGS
+
+Paragon.Limits.Lifesteal = 20
+

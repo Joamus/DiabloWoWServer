@@ -51,6 +51,8 @@
 #include "WeatherMgr.h"
 #include "World.h"
 #include "WorldSession.h"
+#include <iostream>
+#include <iomanip>
 
 // temporary hack until includes are sorted out (don't want to pull in Windows.h)
 #ifdef GetClassName
@@ -130,6 +132,7 @@ public:
             { "paragon intellect",          HandleParagonIntellectCommand,          rbac::RBAC_PERM_COMMAND_SAVE,          Console::No },
             { "paragon spirit",          HandleParagonSpiritCommand,          rbac::RBAC_PERM_COMMAND_SAVE,          Console::No },
             { "paragon spellpower",          HandleParagonSpellPowerCommand,          rbac::RBAC_PERM_COMMAND_SAVE,          Console::No },
+            { "paragon lifesteal",          HandleParagonLifestealCommand,          rbac::RBAC_PERM_COMMAND_SAVE,          Console::No },
             { "paragon stats",          HandleParagonStatsCommand,          rbac::RBAC_PERM_COMMAND_SAVE,          Console::No },
             { "paragon reset",          HandleParagonResetCommand,          rbac::RBAC_PERM_COMMAND_SAVE,          Console::No },
             { "mlvl",          HandleMonsterLevelCommand,          rbac::RBAC_PERM_COMMAND_SAVE,          Console::No }
@@ -415,6 +418,69 @@ public:
         return didSetStat;
     }
 
+    static bool HandleParagonLifestealCommand(ChatHandler* handler, char const* args) {
+        if (!*args)
+            return false;
+
+        Player* player = handler->GetSession()->GetPlayer();
+
+        if (player->IsInCombat()) {
+            handler->SendSysMessage("Cannot set paragon stats during combat");
+            handler->SetSentErrorMessage(true);
+            return false;
+        }
+
+        int amount = 0;
+        bool assignAllPoints = false;
+        if (strcmp(args, "all") == 0) {
+            amount = player->GetAvailableParagonPoints();
+        }
+        else {
+            amount = atoi((char*)args);
+        }
+
+        const int MAX_LIFESTEAL = 2000;
+
+        if (amount > MAX_LIFESTEAL) {
+            amount = MAX_LIFESTEAL;
+        }
+
+        if (amount < 0) {
+            handler->PSendSysMessage("Invalid amount");
+            handler->SetSentErrorMessage(true);
+
+            return false;
+        }
+
+        player->SetAvailableParagonPoints(player->GetAvailableParagonPoints() + player->GetParagonLifesteal());
+
+        if (assignAllPoints) {
+            amount = player->GetAvailableParagonPoints();
+        }
+
+        const bool didSetStat = player->SetParagonLifesteal(amount, false);
+        if (didSetStat) {
+            std::string s = "";
+            if (amount == MAX_LIFESTEAL) {
+                s = "20";
+            }
+            else if (amount == 0) {
+                s = "0";
+            } else {
+                std::stringstream stream;
+                stream << std::fixed << std::setprecision(1) << std::roundf(amount * 0.01);
+                std::string s = stream.str();
+            }
+            handler->PSendSysMessage("Paragon lifesteal set to %s/%s", s, std::to_string(sWorld->getIntConfig(MAX_PARAGON_LIFESTEAL)));
+        }
+        else {
+            handler->SendSysMessage("Not enough available paragon points");
+            handler->SetSentErrorMessage(true);
+
+        }
+        return didSetStat;
+    }
+
     static bool HandleParagonResetCommand(ChatHandler* handler, char const* args) {
         Player* player = handler->GetSession()->GetPlayer();
 
@@ -435,6 +501,16 @@ public:
     static bool HandleParagonStatsCommand(ChatHandler* handler, char const* args) {
         Player* player = handler->GetSession()->GetPlayer();
 
+        std::string lifestealString = "";
+        if (player->GetParagonLifesteal() == 0 || player->GetParagonLifesteal() == sWorld->getIntConfig(MAX_PARAGON_LIFESTEAL)) {
+            lifestealString = player->GetParagonLifesteal();
+        }
+        else {
+            std::stringstream stream;
+            stream << std::fixed << std::setprecision(1) << std::roundf(player->GetParagonLifesteal() * 0.01);
+            lifestealString = stream.str();
+        }
+
 
         handler->SendSysMessage("=== Paragon Level/XP ===");
         handler->PSendSysMessage("Level: %u", player->GetParagonLevel());
@@ -449,7 +525,7 @@ public:
         handler->PSendSysMessage("Intellect: %u", player->GetParagonIntellect());
         handler->PSendSysMessage("Spirit: %u", player->GetParagonSpirit());
         handler->PSendSysMessage("Spell power: %u", player->GetParagonSpellPower());
-
+        handler->PSendSysMessage("Lifesteal: %s/%s", lifestealString, std::to_string(sWorld->getIntConfig(MAX_PARAGON_LIFESTEAL)));
         handler->PSendSysMessage("Available points: %u", player->GetAvailableParagonPoints());
 
 

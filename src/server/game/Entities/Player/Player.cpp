@@ -19626,6 +19626,8 @@ void Player::SaveToDB(CharacterDatabaseTransaction trans, bool create /* = false
         stmt->setUInt32(index++, GetAvailableParagonPoints());
         stmt->setUInt16(index++, GetMonsterLevel(true));
         stmt->setUInt16(index++, GetParagonSpellPower());
+        stmt->setUInt16(index++, GetParagonLifesteal());
+
 
         // Index
         stmt->setUInt32(index++, GetGUID().GetCounter());
@@ -27117,6 +27119,18 @@ bool Player::SetParagonSpellPower(uint32 paragonSpellPower, bool dontUpdateStats
     }
     return false;
 }
+bool Player::SetParagonLifesteal(uint32 paragonLifesteal, bool dontUpdateStats = false) {
+    if ((int)paragonPoints >= (int)paragonLifesteal - (int)this->paragonLifesteal) {
+        this->paragonLifesteal = paragonLifesteal;
+        paragonPoints -= this->paragonLifesteal;
+
+        if (!dontUpdateStats) {
+            UpdateAllStats();
+        }
+        return true;
+    }
+    return false;
+}
 
 bool Player::SetParagonLevel(uint32 level) {
     if ((uint32) level > sObjectMgr->GetMaxParagonLevel()) {
@@ -27161,6 +27175,7 @@ void Player::ResetParagon() {
     paragonPoints += paragonStamina;
     paragonPoints += paragonSpirit;
     paragonPoints += paragonSpellPower;
+    paragonPoints += paragonLifesteal;
 
     paragonStrength = 0;
     paragonAgility = 0;
@@ -27168,6 +27183,7 @@ void Player::ResetParagon() {
     paragonStamina = 0;
     paragonSpirit = 0;
     paragonSpellPower = 0;
+    paragonLifesteal = 0;
 
     UpdateAllStats();
 }
@@ -27180,6 +27196,8 @@ uint32 Player::GetParagonIntellect() const { return paragonIntellect; }
 uint32 Player::GetParagonSpirit() const { return paragonSpirit; }
 uint32 Player::GetParagonSpellPower() const { return paragonSpellPower; }
 uint32 Player::GetParagonLevel() const { return paragonLevel; }
+uint32 Player::GetParagonLifesteal() const { return paragonLifesteal; }
+
 
 
 
