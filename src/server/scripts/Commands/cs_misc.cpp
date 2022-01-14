@@ -185,6 +185,8 @@ public:
             handler->SendSysMessage("Not enough available paragon points");
             handler->SetSentErrorMessage(true);
             player->SetParagonStrength(currentPoints, false);
+            player->SetAvailableParagonPoints(player->GetAvailableParagonPoints() - currentPoints);
+
         }
         return didSetStat;
     }
@@ -234,6 +236,8 @@ public:
             handler->SendSysMessage("Not enough available paragon points");
             handler->SetSentErrorMessage(true);
             player->SetParagonAgility(currentPoints, false);
+            player->SetAvailableParagonPoints(player->GetAvailableParagonPoints() - currentPoints);
+
         }
         return didSetStat;
     }
@@ -282,6 +286,7 @@ public:
             handler->SendSysMessage("Not enough available paragon points");
             handler->SetSentErrorMessage(true);
             player->SetParagonStamina(currentPoints, false);
+            player->SetAvailableParagonPoints(player->GetAvailableParagonPoints() - currentPoints);
 
         }
         return didSetStat;
@@ -330,7 +335,7 @@ public:
             handler->SendSysMessage("Not enough available paragon points");
             handler->SetSentErrorMessage(true);
             player->SetParagonIntellect(currentPoints, false);
-
+            player->SetAvailableParagonPoints(player->GetAvailableParagonPoints() - currentPoints);
 
         }
         return didSetStat;
@@ -379,6 +384,7 @@ public:
             handler->SendSysMessage("Not enough available paragon points");
             handler->SetSentErrorMessage(true);
             player->SetParagonSpirit(currentPoints, false);
+            player->SetAvailableParagonPoints(player->GetAvailableParagonPoints() - currentPoints);
 
         }
         return didSetStat;
@@ -427,6 +433,7 @@ public:
         else {
             handler->SendSysMessage("Not enough available paragon points");
             handler->SetSentErrorMessage(true);
+            player->SetAvailableParagonPoints(player->GetAvailableParagonPoints() - currentPoints);
             player->SetParagonSpellPower(currentPoints, false);
 
         }
@@ -454,7 +461,7 @@ public:
             amount = atoi((char*)args);
         }
 
-        uint32 _MAX_PARAGON_LIFESTEAL = (sWorld->getIntConfig(MAX_PARAGON_LIFESTEAL)) * 100;
+        int _MAX_PARAGON_LIFESTEAL = (int) (sWorld->getIntConfig(MAX_PARAGON_LIFESTEAL)) * 100;
 
         if (amount > _MAX_PARAGON_LIFESTEAL * 100) {
             amount = _MAX_PARAGON_LIFESTEAL * 100;
@@ -492,6 +499,7 @@ public:
         else {
             handler->SendSysMessage("Not enough available paragon points");
             handler->SetSentErrorMessage(true);
+            player->SetAvailableParagonPoints(player->GetAvailableParagonPoints() - currentPoints);
             player->SetParagonLifesteal(currentPoints, false);
         }
         return didSetStat;
