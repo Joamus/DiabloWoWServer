@@ -25,3 +25,5 @@ cmake-build-*/
 *.user
 sql/TDB_full_world_335.21111_2021_11_15.sql
 sql/custom/diablo_stuff/entire_database.sql
+#sql/custom/diablo_stuff/create-mlvl-items.sql
+#sql/custom/diablo_stuff/delete-mlvl-items.sql

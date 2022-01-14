@@ -17849,6 +17849,8 @@ bool Player::LoadFromDB(ObjectGuid guid, CharacterDatabaseQueryHolder const& hol
     paragonPoints = fields[80].GetUInt32();
     monsterLevel = fields[81].GetUInt16();
     paragonSpellPower = fields[82].GetUInt32();
+    paragonLifesteal = fields[83].GetUInt32();
+
 
     UpdateAllStats();
 
@@ -19625,8 +19627,8 @@ void Player::SaveToDB(CharacterDatabaseTransaction trans, bool create /* = false
         stmt->setUInt32(index++, GetParagonXP());
         stmt->setUInt32(index++, GetAvailableParagonPoints());
         stmt->setUInt16(index++, GetMonsterLevel(true));
-        stmt->setUInt16(index++, GetParagonSpellPower());
-        stmt->setUInt16(index++, GetParagonLifesteal());
+        stmt->setUInt32(index++, GetParagonSpellPower());
+        stmt->setUInt32(index++, GetParagonLifesteal());
 
 
         // Index
@@ -27048,7 +27050,7 @@ GameClient* Player::GetGameClient() const
     return GetSession()->GetGameClient();
 }
 bool Player::SetParagonStrength(uint32 paragonStrength, bool dontUpdateStats = false) {
-    if ((int) paragonPoints >= paragonStrength - (int) this->paragonStrength) {
+    if (paragonPoints >= paragonStrength) {
         this->paragonStrength = paragonStrength;
         paragonPoints -= this->paragonStrength;
         if (!dontUpdateStats) {
@@ -27060,7 +27062,7 @@ bool Player::SetParagonStrength(uint32 paragonStrength, bool dontUpdateStats = f
 }
 
 bool Player::SetParagonAgility(uint32 paragonAgility, bool dontUpdateStats = false) {
-    if ((int) paragonPoints >= (int) paragonAgility - (int) this->paragonAgility) {
+    if (paragonPoints >= paragonAgility) {
         this->paragonAgility = paragonAgility;
         paragonPoints -= this->paragonAgility;
 
@@ -27072,7 +27074,7 @@ bool Player::SetParagonAgility(uint32 paragonAgility, bool dontUpdateStats = fal
     return false;
 }
 bool Player::SetParagonStamina(uint32 paragonStamina, bool dontUpdateStats = false) {
-    if ((int) paragonPoints >= (int) paragonStamina - (int) this->paragonStamina) {
+    if (paragonPoints >= paragonStamina) {
         this->paragonStamina = paragonStamina;
         paragonPoints -= this->paragonStamina;
 
@@ -27084,7 +27086,7 @@ bool Player::SetParagonStamina(uint32 paragonStamina, bool dontUpdateStats = fal
     return false;
 }
 bool Player::SetParagonIntellect(uint32 paragonIntellect, bool dontUpdateStats = false) {
-    if ((int) paragonPoints >= (int) paragonIntellect - (int) this->paragonIntellect) {
+    if (paragonPoints >= paragonIntellect) {
         this->paragonIntellect = paragonIntellect;
         paragonPoints -= this->paragonIntellect;
 
@@ -27096,7 +27098,7 @@ bool Player::SetParagonIntellect(uint32 paragonIntellect, bool dontUpdateStats =
     return false;
 }
 bool Player::SetParagonSpirit(uint32 paragonSpirit, bool dontUpdateStats = false) {
-    if ((int) paragonPoints >= (int) paragonSpirit - (int) this->paragonSpirit) {
+    if (paragonPoints >= paragonSpirit) {
         this->paragonSpirit = paragonSpirit;
         paragonPoints -= this->paragonSpirit;
 
@@ -27108,7 +27110,7 @@ bool Player::SetParagonSpirit(uint32 paragonSpirit, bool dontUpdateStats = false
     return false;
 }
 bool Player::SetParagonSpellPower(uint32 paragonSpellPower, bool dontUpdateStats = false) {
-    if ((int)paragonPoints >= (int)paragonSpellPower - (int)this->paragonSpellPower) {
+    if (paragonPoints >= paragonSpellPower) {
         this->paragonSpellPower = paragonSpellPower;
         paragonPoints -= this->paragonSpellPower;
 
@@ -27120,7 +27122,7 @@ bool Player::SetParagonSpellPower(uint32 paragonSpellPower, bool dontUpdateStats
     return false;
 }
 bool Player::SetParagonLifesteal(uint32 paragonLifesteal, bool dontUpdateStats = false) {
-    if ((int)paragonPoints >= (int)paragonLifesteal - (int)this->paragonLifesteal) {
+    if (paragonPoints >= paragonLifesteal) {
         this->paragonLifesteal = paragonLifesteal;
         paragonPoints -= this->paragonLifesteal;
 

@@ -972,18 +972,14 @@ bool Unit::HasBreakableByDamageCrowdControlAura(Unit* excludeCasterChannel) cons
     if (victim->GetStandState() && victim->IsPlayer())
         victim->SetStandState(UNIT_STAND_STATE_STAND);
 
-    //std::cout << "Damaging mob: " << std::endl;
-
-    //if (attacker && attacker->IsAlive() && (attacker->IsPlayer() || attacker->IsPet() && attacker->IsControlledByPlayer()))
-    //{
-    //    Player* attackerAsPlayer = attacker->IsPet() ? attacker->GetOwner()->ToPlayer() : attacker->ToPlayer();
-    //    if (attackerAsPlayer->GetParagonLifesteal() > 0) {
-    //        uint32 healthGain = damage * (attackerAsPlayer->GetParagonLifesteal() * 0.01 * 0.01); // In percent
-    //        std::cout << "Health gain is: " << std::endl;
-    //        std::cout << healthGain << std::endl;
-    //        attackerAsPlayer->ModifyHealth((int32) healthGain);
-    //    }
-    //}
+    if (attacker && attacker->IsAlive() && (attacker->IsPlayer() || attacker->IsPet() && attacker->IsControlledByPlayer()))
+    {
+        Player* attackerAsPlayer = attacker->IsPet() ? attacker->GetOwner()->ToPlayer() : attacker->ToPlayer();
+        if (attackerAsPlayer->GetParagonLifesteal() > 0) {
+            uint32 healthGain = damage * (attackerAsPlayer->GetParagonLifesteal() * 0.01 * 0.01); // In percent
+            attackerAsPlayer->ModifyHealth((int32) healthGain);
+        }
+    }
 
     return damage;
 }

@@ -11,7 +11,7 @@ mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 $mysqli = new mysqli("localhost", "trinity", "trinity", "world");
 
 // Might be faster with two connections? One for deleting, one for prepared statements
-$mysqli_for_deletes = new mysqli("localhost", "trinity", "trinity", "world");
+// $mysqli_for_deletes = new mysqli("localhost", "trinity", "trinity", "world");
 
 // Drop items with monster lvl above 1 - it means this has been run before, so we just want to remake the items and not have duplicates
 $date = gmdate('Y_m_d');
@@ -20,7 +20,7 @@ $date = gmdate('Y_m_d');
 // exit;
 
 $mysqli->query("CREATE TABLE IF NOT EXISTS world.item_template_backup_$date LIKE world.item_template;");
-$mysqli->query("INSERT INTO world.item_template_backup_$date SELECT * FROM world.item_template;");
+// $mysqli->query("INSERT INTO world.item_template_backup_$date SELECT * FROM world.item_template;");
 // $mysqli->query("DELETE FROM world.item_template WHERE monster_level > 1 AND inherit_from_item IS NOT NULL;");
 
 // Fetch items
@@ -34,6 +34,8 @@ $next_item_id = intval($next_item_id_stmt->fetch_row()[0]);
 // For every item, we are gonna make different monster level versions of it
 $prepare_string = "INSERT INTO world.item_template ({column_names}) VALUES ({column_values})";
 $bind_string = "";
+
+$column_value_question_marks = "";
 
 
 if ($items_stmt) {
@@ -49,10 +51,10 @@ if ($items_stmt) {
             $i = 0;
             foreach($row as $key => $val) {
                 if ($i == 0) {
-                    $column_value_question_marks = $column_value_question_marks . "?";
-                    $column_name_question_marks = $column_name_question_marks . $key;
+                    // $column_value_question_marks = "?";
+                    $column_name_question_marks = $key;
                 } else {
-                    $column_value_question_marks = $column_value_question_marks .  ", ?";
+                    // $column_value_question_marks = $column_value_question_marks .  ", ?";
                     $column_name_question_marks = $column_name_question_marks . ", $key";
 
                 }
@@ -65,8 +67,8 @@ if ($items_stmt) {
             }
 
             $prepare_string = preg_replace("/{column_names}/", $column_name_question_marks, $prepare_string);
-            $prepare_string = preg_replace("/{column_values}/", $column_value_question_marks, $prepare_string);
-            $prepared_statment = $mysqli->prepare($prepare_string);
+            // $prepare_string = preg_replace("/{column_values}/", $column_value_question_marks, $prepare_string);
+            // $prepared_statment = $mysqli->prepare($prepare_string);
         }
         // First item we want to make is monster_level 2, so we start at 2;
         for ($i = 2; $i <= $MAX_MONSTER_LEVEL; $i++) {
@@ -80,7 +82,9 @@ if ($items_stmt) {
             $next_item_id++;
             
             if ($existing_entry > 0) {
-                $mysqli_for_deletes->query("DELETE FROM world.item_template WHERE entry = $existing_entry");
+                file_put_contents('delete-mlvl-items.sql', "DELETE FROM world.item_template WHERE entry = $existing_entry;", FILE_APPEND);
+
+                // $mysqli_for_deletes->query("DELETE FROM world.item_template WHERE entry = $existing_entry");
             }
             makeItem($existing_entry > 0 ? $existing_entry : $next_item_id, $row, $i);
         }
@@ -89,7 +93,7 @@ if ($items_stmt) {
     }
     $items_stmt -> free_result();
     $mysqli->close();
-    $mysqli_for_deletes->close();
+    // $mysqli_for_deletes->close();
     echo "Done";
 }
 
@@ -99,7 +103,8 @@ function makeItem($entry, $row, $monster_level) {
     global $mysqli;
     global $prepared_statment;
     global $bind_string;
-
+    global $prepare_string;
+    global $column_value_question_marks;
 
     $new_item = array(
         "entry" => (int) $entry, //entry
@@ -136,8 +141,15 @@ function makeItem($entry, $row, $monster_level) {
         }
     }
 
-    $prepared_statment->bind_param($bind_string, ...$values);
-    $prepared_statment->execute();
+    
+    $values_string = implode(',', $values);
+    
+    $insert = preg_replace("/{column_values}/", $values_string, $prepare_string);
+    
+    
+    file_put_contents('create-mlvl-items.sql', $insert . ";", FILE_APPEND);
+    // $prepared_statment->bind_param($bind_string, ...$values);
+    // $prepared_statment->execute();
 }
 
 
