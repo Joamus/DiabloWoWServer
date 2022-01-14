@@ -171,7 +171,7 @@ public:
 
         uint32 currentPoints = player->GetParagonStrength();
 
-        player->SetAvailableParagonPoints(player->GetAvailableParagonPoints() + player->GetParagonStrength());
+        player->SetAvailableParagonPoints(player->GetAvailableParagonPoints() + currentPoints);
 
         if (assignAllPoints) {
             amount = player->GetAvailableParagonPoints();
@@ -184,7 +184,6 @@ public:
         else {
             handler->SendSysMessage("Not enough available paragon points");
             handler->SetSentErrorMessage(true);
-            player->SetParagonStrength(currentPoints, false);
             player->SetAvailableParagonPoints(player->GetAvailableParagonPoints() - currentPoints);
 
         }
@@ -222,7 +221,7 @@ public:
 
         uint32 currentPoints = player->GetParagonAgility();
 
-        player->SetAvailableParagonPoints(player->GetAvailableParagonPoints() + player->GetParagonAgility());
+        player->SetAvailableParagonPoints(player->GetAvailableParagonPoints() + currentPoints);
 
         if (assignAllPoints) {
             amount = player->GetAvailableParagonPoints();
@@ -235,7 +234,6 @@ public:
         else {
             handler->SendSysMessage("Not enough available paragon points");
             handler->SetSentErrorMessage(true);
-            player->SetParagonAgility(currentPoints, false);
             player->SetAvailableParagonPoints(player->GetAvailableParagonPoints() - currentPoints);
 
         }
@@ -276,7 +274,7 @@ public:
 
         uint32 currentPoints = player->GetParagonStamina();
 
-        player->SetAvailableParagonPoints(player->GetAvailableParagonPoints() + player->GetParagonStamina());
+        player->SetAvailableParagonPoints(player->GetAvailableParagonPoints() + currentPoints);
 
         const bool didSetStat = player->SetParagonStamina(amount, false);
         if (didSetStat) {
@@ -285,7 +283,6 @@ public:
         else {
             handler->SendSysMessage("Not enough available paragon points");
             handler->SetSentErrorMessage(true);
-            player->SetParagonStamina(currentPoints, false);
             player->SetAvailableParagonPoints(player->GetAvailableParagonPoints() - currentPoints);
 
         }
@@ -321,7 +318,7 @@ public:
         }
         uint32 currentPoints = player->GetParagonIntellect();
 
-        player->SetAvailableParagonPoints(player->GetAvailableParagonPoints() + player->GetParagonIntellect());
+        player->SetAvailableParagonPoints(player->GetAvailableParagonPoints() + currentPoints);
 
         if (assignAllPoints) {
             amount = player->GetAvailableParagonPoints();
@@ -334,7 +331,6 @@ public:
         else {
             handler->SendSysMessage("Not enough available paragon points");
             handler->SetSentErrorMessage(true);
-            player->SetParagonIntellect(currentPoints, false);
             player->SetAvailableParagonPoints(player->GetAvailableParagonPoints() - currentPoints);
 
         }
@@ -370,7 +366,7 @@ public:
         }
         uint32 currentPoints = player->GetParagonSpirit();
 
-        player->SetAvailableParagonPoints(player->GetAvailableParagonPoints() + player->GetParagonSpirit());
+        player->SetAvailableParagonPoints(player->GetAvailableParagonPoints() + currentPoints);
 
         if (assignAllPoints) {
             amount = player->GetAvailableParagonPoints();
@@ -383,7 +379,6 @@ public:
         else {
             handler->SendSysMessage("Not enough available paragon points");
             handler->SetSentErrorMessage(true);
-            player->SetParagonSpirit(currentPoints, false);
             player->SetAvailableParagonPoints(player->GetAvailableParagonPoints() - currentPoints);
 
         }
@@ -420,7 +415,7 @@ public:
         }
 
         uint32 currentPoints = player->GetParagonSpellPower();
-        player->SetAvailableParagonPoints(player->GetAvailableParagonPoints() + player->GetParagonSpellPower());
+        player->SetAvailableParagonPoints(player->GetAvailableParagonPoints() + currentPoints);
 
         if (assignAllPoints) {
             amount = player->GetAvailableParagonPoints();
@@ -434,7 +429,6 @@ public:
             handler->SendSysMessage("Not enough available paragon points");
             handler->SetSentErrorMessage(true);
             player->SetAvailableParagonPoints(player->GetAvailableParagonPoints() - currentPoints);
-            player->SetParagonSpellPower(currentPoints, false);
 
         }
         return didSetStat;
@@ -475,7 +469,7 @@ public:
         }
         uint32 currentPoints = player->GetParagonLifesteal();
 
-        player->SetAvailableParagonPoints(player->GetAvailableParagonPoints() + player->GetParagonLifesteal());
+        player->SetAvailableParagonPoints(player->GetAvailableParagonPoints() + currentPoints);
 
         if (assignAllPoints) {
             amount = player->GetAvailableParagonPoints();
@@ -494,13 +488,12 @@ public:
                 stream << std::fixed << std::setprecision(3) << std::roundf((amount * 0.01));
                 std::string s = stream.str();
             }
-            handler->PSendSysMessage("Paragon lifesteal set to %d of %s (%s%%)", amount, std::to_string(MAX_PARAGON_LIFESTEAL), s);
+            handler->PSendSysMessage("Paragon lifesteal set to %u of %u (%s%%)", amount, sWorld->getIntConfig(MAX_PARAGON_LIFESTEAL), s);
         }
         else {
             handler->SendSysMessage("Not enough available paragon points");
             handler->SetSentErrorMessage(true);
             player->SetAvailableParagonPoints(player->GetAvailableParagonPoints() - currentPoints);
-            player->SetParagonLifesteal(currentPoints, false);
         }
         return didSetStat;
     }
@@ -549,7 +542,7 @@ public:
         handler->PSendSysMessage("Intellect: %u", player->GetParagonIntellect());
         handler->PSendSysMessage("Spirit: %u", player->GetParagonSpirit());
         handler->PSendSysMessage("Spell power: %u", player->GetParagonSpellPower());
-        handler->PSendSysMessage("Lifesteal: %s of %s %%", lifestealString, std::to_string(sWorld->getIntConfig(MAX_PARAGON_LIFESTEAL)));
+        handler->PSendSysMessage("Lifesteal: %s of %u %%", lifestealString, sWorld->getIntConfig(MAX_PARAGON_LIFESTEAL));
         handler->PSendSysMessage("Available points: %u", player->GetAvailableParagonPoints());
 
 
