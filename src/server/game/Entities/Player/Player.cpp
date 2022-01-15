@@ -19370,7 +19370,7 @@ void Player::SaveToDB(CharacterDatabaseTransaction trans, bool create /* = false
         sScriptMgr->OnPlayerSave(this);
 
     CharacterDatabasePreparedStatement* stmt = nullptr;
-    uint8 index = 0;
+    uint16 index = 0;
 
     stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_CHAR_FISHINGSTEPS);
     stmt->setUInt32(0, GetGUID().GetCounter());

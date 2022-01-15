@@ -977,7 +977,18 @@ bool Unit::HasBreakableByDamageCrowdControlAura(Unit* excludeCasterChannel) cons
         Player* attackerAsPlayer = attacker->IsPet() ? attacker->GetOwner()->ToPlayer() : attacker->ToPlayer();
         if (attackerAsPlayer->GetParagonLifesteal() > 0) {
             uint32 healthGain = damage * (attackerAsPlayer->GetParagonLifesteal() * 0.01 * 0.01); // In percent
-            attackerAsPlayer->ModifyHealth((int32) healthGain);
+            if (attacker->IsPet()) {
+                if (Unit* pet = attackerAsPlayer->GetGuardianPet()) {
+                    pet->ModifyHealth((int32)healthGain);
+                    attackerAsPlayer->ModifyHealth((int32)healthGain * 0.20f);
+                }
+            }
+            else if (attacker->IsPlayer()) {
+                attackerAsPlayer->ModifyHealth((int32)healthGain);
+                if (Unit* pet = attackerAsPlayer->GetGuardianPet()) {
+                    pet->ModifyHealth((int32)healthGain * 0.20f);
+                }
+            }
         }
     }
 

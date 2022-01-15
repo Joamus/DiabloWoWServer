@@ -143,8 +143,8 @@ $stat_list = array(
     )
 );
 
-$query_as_string = "BEGIN;\r\n";
-file_put_contents('test-query.sql', $query_as_string, FILE_APPEND);
+// $query_as_string = "BEGIN;\r\n";
+// file_put_contents('fix-stats.sql', $query_as_string, FILE_APPEND);
 
 while ($item = $items_stmt -> fetch_assoc()) {
     $monster_level = $item["monster_level"];
@@ -166,7 +166,7 @@ while ($item = $items_stmt -> fetch_assoc()) {
             continue;
         }
         $stat_value = 0;
-        $stat_id;
+        $stat_id = 0;
 
         // Find the stat type that the spell benefits
         foreach($stat_list as $stat_element) {
@@ -174,7 +174,13 @@ while ($item = $items_stmt -> fetch_assoc()) {
             if ($stat_value_exists == true) {
                 $stat_id = $stat_element["id"];
                 $stat_value = $stat_element["fixed_spell_values"][$spell_id];
-                $stat_value = $stat_value * ($monster_level - 1) * get_quality_multiplier($stat_element["Quality"]);
+                $stat_value = $stat_value * ($monster_level - 1) * get_quality_multiplier($item["Quality"]);
+
+                if ($stat_id == 45) {
+                    $stat_value = $stat_value * 1.3;
+                } else {
+                    $stat_value = $stat_value * 1.1;
+                }
             } else if (strpos(strtolower($spell_name_from_dbc), $stat_element["spell_name"]) !== false) {
                 $stat_value = preg_replace("/[^0-9]/", "", $spell_name_from_dbc);
                 if (!is_numeric($stat_value)) {
@@ -185,13 +191,14 @@ while ($item = $items_stmt -> fetch_assoc()) {
                     $stat_value = intval($stat_value);
                 }
                 $stat_id = $stat_element["id"];
-                $stat_value = ($stat_value * $stat_element["factor"]) * ($monster_level - 1) * get_quality_multiplier($stat_element["Quality"]);;
-            }
-            if ($stat_id == 45) {
-                $stat_value = $stat_value * 1.3;
-            } else {
-                $stat_value = $stat_value * 1.1;
-            }
+                $stat_value = ($stat_value * $stat_element["factor"]) * ($monster_level - 1) * get_quality_multiplier($item["Quality"]);
+
+                if ($stat_id == 45) {
+                    $stat_value = $stat_value * 1.3;
+                } else {
+                    $stat_value = $stat_value * 1.1;
+                }
+            } 
         }
         // The stats in the predefined list with value 0 should be ignored.
         if ($stat_value > 0) {
@@ -224,14 +231,14 @@ while ($item = $items_stmt -> fetch_assoc()) {
 
             $query = "UPDATE world.item_template SET $next_available_stat_type_key = $stat_id, $next_available_stat_value_key = ceil($stat_value), StatsCount = StatsCount + 1 WHERE entry = ". $item["entry"] . ";\n";
             // echo $query;
-            file_put_contents('test-query.sql', $query, FILE_APPEND);
+            file_put_contents('fix-stats.sql', $query, FILE_APPEND);
         }
     }
 
 }
 
 
-file_put_contents('test-query.sql', "COMMIT;", FILE_APPEND);
+file_put_contents('fix-stats.sql', "COMMIT;", FILE_APPEND);
 echo "Done!";
 // Comment for git fix
 

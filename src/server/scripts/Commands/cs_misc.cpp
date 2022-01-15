@@ -177,7 +177,7 @@ public:
             amount = player->GetAvailableParagonPoints();
         }
 
-        const bool didSetStat = player->SetParagonStrength(amount, false);
+        const bool didSetStat = player->SetParagonStrength((uint32) amount, false);
         if (didSetStat) {
             handler->PSendSysMessage("Paragon strength set to %u", (uint32) amount);
         }
@@ -227,7 +227,7 @@ public:
             amount = player->GetAvailableParagonPoints();
         }
 
-        const bool didSetStat = player->SetParagonAgility(amount, false);
+        const bool didSetStat = player->SetParagonAgility((uint32) amount, false);
         if (didSetStat) {
             handler->PSendSysMessage("Paragon agility set to %u", (uint32) amount);
         }
@@ -276,7 +276,7 @@ public:
 
         player->SetAvailableParagonPoints(player->GetAvailableParagonPoints() + currentPoints);
 
-        const bool didSetStat = player->SetParagonStamina(amount, false);
+        const bool didSetStat = player->SetParagonStamina((uint32) amount, false);
         if (didSetStat) {
             handler->PSendSysMessage("Paragon stamina set to %u", (uint32) amount);
         }
@@ -323,7 +323,7 @@ public:
         if (assignAllPoints) {
             amount = player->GetAvailableParagonPoints();
         }
-        const bool didSetStat = player->SetParagonIntellect(amount, false);
+        const bool didSetStat = player->SetParagonIntellect((uint32) amount, false);
 
         if (didSetStat) {
             handler->PSendSysMessage("Paragon intellect set to %u", (uint32) amount);
@@ -352,7 +352,7 @@ public:
         int amount = 0;
         bool assignAllPoints = false;
         if (strcmp(args, "all") == 0) {
-            amount = player->GetAvailableParagonPoints();
+            assignAllPoints = true;
         }
         else {
             amount = atoi((char*)args);
@@ -372,9 +372,9 @@ public:
             amount = player->GetAvailableParagonPoints();
         }
 
-        const bool didSetStat = player->SetParagonSpirit(amount, false);
+        const bool didSetStat = player->SetParagonSpirit((uint32) amount, false);
         if (didSetStat) {
-            handler->PSendSysMessage("Paragon spirit set to %u", (uint32)amount);
+            handler->PSendSysMessage("Paragon spirit set to %u", (uint32 )amount);
         }
         else {
             handler->SendSysMessage("Not enough available paragon points");
@@ -401,7 +401,7 @@ public:
         int amount = 0;
         bool assignAllPoints = false;
         if (strcmp(args, "all") == 0) {
-            amount = player->GetAvailableParagonPoints();
+            assignAllPoints = true;
         }
         else {
             amount = atoi((char*)args);
@@ -421,7 +421,7 @@ public:
             amount = player->GetAvailableParagonPoints();
         }
 
-        const bool didSetStat = player->SetParagonSpellPower(amount, false);
+        const bool didSetStat = player->SetParagonSpellPower((uint32) amount, false);
         if (didSetStat) {
             handler->PSendSysMessage("Paragon spellpower set to %u", (uint32)amount);
         }
@@ -449,16 +449,16 @@ public:
         int amount = 0;
         bool assignAllPoints = false;
         if (strcmp(args, "all") == 0) {
-            amount = player->GetAvailableParagonPoints();
+            assignAllPoints = true;
         }
         else {
             amount = atoi((char*)args);
         }
 
-        int _MAX_PARAGON_LIFESTEAL = (int) (sWorld->getIntConfig(MAX_PARAGON_LIFESTEAL)) * 100;
+        uint32 _MAX_PARAGON_LIFESTEAL = (sWorld->getIntConfig(MAX_PARAGON_LIFESTEAL)) * 100;
 
-        if (amount > _MAX_PARAGON_LIFESTEAL * 100) {
-            amount = _MAX_PARAGON_LIFESTEAL * 100;
+        if (assignAllPoints) {
+            amount = player->GetAvailableParagonPoints();
         }
 
         if (amount < 0) {
@@ -467,15 +467,17 @@ public:
 
             return false;
         }
+        if ((uint32) amount > _MAX_PARAGON_LIFESTEAL) {
+            amount = _MAX_PARAGON_LIFESTEAL;
+        }
+
+
         uint32 currentPoints = player->GetParagonLifesteal();
 
         player->SetAvailableParagonPoints(player->GetAvailableParagonPoints() + currentPoints);
 
-        if (assignAllPoints) {
-            amount = player->GetAvailableParagonPoints();
-        }
-
-        const bool didSetStat = player->SetParagonLifesteal(amount, false);
+     
+        const bool didSetStat = player->SetParagonLifesteal((uint32) amount, false);
         if (didSetStat) {
             std::string s = "";
             if (amount == _MAX_PARAGON_LIFESTEAL) {
