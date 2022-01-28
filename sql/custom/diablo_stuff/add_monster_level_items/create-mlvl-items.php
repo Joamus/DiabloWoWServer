@@ -42,6 +42,8 @@ if ($items_stmt) {
     // First monster level items we make are 2, normal items are 1
     $counter = 0;
     while ($row = $items_stmt -> fetch_assoc()) {
+        $insert_statements = "";
+        $delete_statements = "";
         $existing_items = $mysqli->query("SELECT entry, inherit_from_item, monster_level FROM world.item_template WHERE monster_level > 1 AND inherit_from_item = " . $row['entry']);
         $existing_items->fetch_all(MYSQLI_ASSOC);
         if ($counter == 0) {
@@ -82,13 +84,17 @@ if ($items_stmt) {
             $next_item_id++;
             
             if ($existing_entry > 0) {
-                file_put_contents('delete-mlvl-items.sql', "DELETE FROM world.item_template WHERE entry = $existing_entry;", FILE_APPEND);
+                $delete_statements = $delete_statements . "DELETE FROM world.item_template WHERE entry = $existing_entry;\n";
+                // file_put_contents('delete-mlvl-items.sql', "DELETE FROM world.item_template WHERE entry = $existing_entry;", FILE_APPEND);
 
                 // $mysqli_for_deletes->query("DELETE FROM world.item_template WHERE entry = $existing_entry");
             }
-            makeItem($existing_entry > 0 ? $existing_entry : $next_item_id, $row, $i);
+            $insert_statements = $insert_statements . makeItem($existing_entry > 0 ? $existing_entry : $next_item_id, $row, $i);
         }
         $existing_items -> free_result();
+        file_put_contents('delete-mlvl-items.sql', $delete_statements, FILE_APPEND);
+        file_put_contents('create-mlvl-items.sql', $insert_statements, FILE_APPEND);
+
         $counter++;
     }
     $items_stmt -> free_result();
@@ -145,23 +151,25 @@ function makeItem($entry, $row, $monster_level) {
     $values_string = implode(',', $values);
     
     $insert = preg_replace("/{column_values}/", $values_string, $prepare_string);
+
+    return $insert . ";\n";
     
     
-    file_put_contents('create-mlvl-items.sql', $insert . ";", FILE_APPEND);
+    // file_put_contents('create-mlvl-items.sql', $insert . ";", FILE_APPEND);
     // $prepared_statment->bind_param($bind_string, ...$values);
     // $prepared_statment->execute();
 }
 
 
 function getWepDamageMultiplier($monster_level) {
-    return $monster_level * 1.1;
+    return $monster_level * 1.3;
 }
 
 function getStatMultiplier($monster_level, $stat_type_id) {
     if ($stat_type_id == 45) {
-        return $monster_level * 1.3;
+        return $monster_level * 2;
     }
-    return $monster_level * 1.1;
+    return $monster_level * 1.3;
 }
 
 function getGoldMultiplier($monster_level) {
@@ -171,14 +179,14 @@ function getGoldMultiplier($monster_level) {
 
 function getArmorBlockMultiplier($monster_level) {
     // return (int) ceil(1 + (($monster_level-1) * 0.5));
-    return $monster_level * 1.1;
+    return $monster_level * 1.3;
 }
 
 function getQualityMultiplier($quality) {
     if ($quality < 4) {
         return 1;
     } else if ($quality == 4 || $quality == 5) {
-        return 1.1;
+        return 1.5;
     } else {
         return 1;
     }

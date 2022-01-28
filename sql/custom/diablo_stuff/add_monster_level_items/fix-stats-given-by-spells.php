@@ -177,9 +177,9 @@ while ($item = $items_stmt -> fetch_assoc()) {
                 $stat_value = $stat_value * ($monster_level - 1) * get_quality_multiplier($item["Quality"]);
 
                 if ($stat_id == 45) {
-                    $stat_value = $stat_value * 1.3;
+                    $stat_value = $stat_value * 2;
                 } else {
-                    $stat_value = $stat_value * 1.1;
+                    $stat_value = $stat_value * 1.3;
                 }
             } else if (strpos(strtolower($spell_name_from_dbc), $stat_element["spell_name"]) !== false) {
                 $stat_value = preg_replace("/[^0-9]/", "", $spell_name_from_dbc);
@@ -194,9 +194,9 @@ while ($item = $items_stmt -> fetch_assoc()) {
                 $stat_value = ($stat_value * $stat_element["factor"]) * ($monster_level - 1) * get_quality_multiplier($item["Quality"]);
 
                 if ($stat_id == 45) {
-                    $stat_value = $stat_value * 1.3;
+                    $stat_value = $stat_value * 2;
                 } else {
-                    $stat_value = $stat_value * 1.1;
+                    $stat_value = $stat_value * 1.3;
                 }
             } 
         }
@@ -263,7 +263,7 @@ function get_quality_multiplier($quality) {
     if ($quality < 4) {
         return 1;
     } else if ($quality == 4 || $quality == 5) {
-        return 1.1;
+        return 1.5;
     } else {
         return 1;
     }
