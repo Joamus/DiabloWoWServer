@@ -114,7 +114,7 @@ function makeItem($entry, $row, $monster_level) {
 
     $new_item = array(
         "entry" => (int) $entry, //entry
-        "name" => $row["name"] . " [MLVL $monster_level]",
+        "name" => "\"" . $row["name"] . " [MLVL $monster_level]\"",
         "BuyPrice" => ((int) $row["BuyPrice"]) * getGoldMultiplier($monster_level) * getQualityMultiplier($row["Quality"]), 
         "SellPrice" => ((int) $row["SellPrice"]) * getGoldMultiplier($monster_level) * getQualityMultiplier($row["Quality"]), 
         "stat_value1" => ((int) $row["stat_value1"]) * getStatMultiplier($monster_level, $row["stat_type1"]) * getQualityMultiplier($row["Quality"]),
