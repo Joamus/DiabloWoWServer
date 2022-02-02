@@ -702,6 +702,7 @@ void LFGMgr::UpdateRoleCheck(ObjectGuid gguid, ObjectGuid guid /* = ObjectGuid::
     if (!gguid)
         return;
 
+
     LfgRolesMap check_roles;
     LfgRoleCheckContainer::iterator itRoleCheck = RoleChecksStore.find(gguid);
     if (itRoleCheck == RoleChecksStore.end())

@@ -126,16 +126,19 @@ public:
             { "unstuck",          HandleUnstuckCommand,          rbac::RBAC_PERM_COMMAND_UNSTUCK,          Console::Yes },
             { "wchange",          HandleChangeWeather,           rbac::RBAC_PERM_COMMAND_WCHANGE,          Console::No },
             { "mailbox",          HandleMailBoxCommand,          rbac::RBAC_PERM_COMMAND_MAILBOX,          Console::No },
-            { "paragon strength",          HandleParagonStrengthCommand,          rbac::RBAC_PERM_COMMAND_SAVE,          Console::No },
-            { "paragon agility",          HandleParagonAgilityCommand,          rbac::RBAC_PERM_COMMAND_SAVE,          Console::No },
-            { "paragon stamina",          HandleParagonStaminaCommand,          rbac::RBAC_PERM_COMMAND_SAVE,          Console::No },
-            { "paragon intellect",          HandleParagonIntellectCommand,          rbac::RBAC_PERM_COMMAND_SAVE,          Console::No },
-            { "paragon spirit",          HandleParagonSpiritCommand,          rbac::RBAC_PERM_COMMAND_SAVE,          Console::No },
-            { "paragon spellpower",          HandleParagonSpellPowerCommand,          rbac::RBAC_PERM_COMMAND_SAVE,          Console::No },
+            //{ "paragon strength",          HandleParagonStrengthCommand,          rbac::RBAC_PERM_COMMAND_SAVE,          Console::No },
+            //{ "paragon agility",          HandleParagonAgilityCommand,          rbac::RBAC_PERM_COMMAND_SAVE,          Console::No },
+            //{ "paragon stamina",          HandleParagonStaminaCommand,          rbac::RBAC_PERM_COMMAND_SAVE,          Console::No },
+            //{ "paragon intellect",          HandleParagonIntellectCommand,          rbac::RBAC_PERM_COMMAND_SAVE,          Console::No },
+            //{ "paragon spirit",          HandleParagonSpiritCommand,          rbac::RBAC_PERM_COMMAND_SAVE,          Console::No },
+            //{ "paragon spellpower",          HandleParagonSpellPowerCommand,          rbac::RBAC_PERM_COMMAND_SAVE,          Console::No },
             { "paragon lifesteal",          HandleParagonLifestealCommand,          rbac::RBAC_PERM_COMMAND_SAVE,          Console::No },
+            { "paragon offense",          HandleParagonOffenseCommand,          rbac::RBAC_PERM_COMMAND_SAVE,          Console::No },
+            { "paragon defense",          HandleParagonDefenseCommand,          rbac::RBAC_PERM_COMMAND_SAVE,          Console::No },
+            { "paragon heal",          HandleParagonHealCommand,          rbac::RBAC_PERM_COMMAND_SAVE,          Console::No },
             { "paragon stats",          HandleParagonStatsCommand,          rbac::RBAC_PERM_COMMAND_SAVE,          Console::No },
-            { "paragon reset",          HandleParagonResetCommand,          rbac::RBAC_PERM_COMMAND_SAVE,          Console::No },
-            { "mlvl",          HandleMonsterLevelCommand,          rbac::RBAC_PERM_COMMAND_SAVE,          Console::No }
+            { "paragon reset",          HandleParagonResetCommand,          rbac::RBAC_PERM_COMMAND_SAVE,          Console::No }
+            //{ "mlvl",          HandleMonsterLevelCommand,          rbac::RBAC_PERM_COMMAND_SAVE,          Console::No }
         };
         return commandTable;
     }
@@ -500,9 +503,209 @@ public:
         return didSetStat;
     }
 
-    static bool HandleParagonResetCommand(ChatHandler* handler, char const* args) {
+    static bool HandleParagonOffenseCommand(ChatHandler* handler, char const* args) {
+        if (!*args)
+            return false;
+
         Player* player = handler->GetSession()->GetPlayer();
 
+        if (player->IsInCombat()) {
+            handler->SendSysMessage("Cannot set paragon stats during combat");
+            handler->SetSentErrorMessage(true);
+            return false;
+        }
+
+        int amount = 0;
+        bool assignAllPoints = false;
+        if (strcmp(args, "all") == 0) {
+            assignAllPoints = true;
+        }
+        else {
+            amount = atoi((char*)args);
+        }
+
+        uint32 _MAX_PARAGON_OFFENSE = (sWorld->getIntConfig(MAX_PARAGON_OFFENSE)) * 100;
+
+        if (assignAllPoints) {
+            amount = player->GetAvailableParagonPoints();
+        }
+
+        if (amount < 0) {
+            handler->PSendSysMessage("Invalid amount");
+            handler->SetSentErrorMessage(true);
+
+            return false;
+        }
+        if ((uint32)amount > _MAX_PARAGON_OFFENSE) {
+            amount = _MAX_PARAGON_OFFENSE;
+        }
+
+
+        uint32 currentPoints = player->GetParagonOffense();
+
+        player->SetAvailableParagonPoints(player->GetAvailableParagonPoints() + currentPoints);
+
+
+        const bool didSetStat = player->SetParagonOffense((uint32)amount, false);
+        if (didSetStat) {
+            std::string s = "";
+            if (amount == _MAX_PARAGON_OFFENSE) {
+                s = std::to_string(_MAX_PARAGON_OFFENSE);
+            }
+            else if (amount == 0) {
+                s = "0";
+            }
+            else {
+                std::stringstream stream;
+                stream << std::fixed << std::setprecision(3) << std::roundf((amount * 0.01));
+                std::string s = stream.str();
+            }
+            handler->PSendSysMessage("Paragon offense set to %u of %u (%s%%)", amount, _MAX_PARAGON_OFFENSE, s);
+        }
+        else {
+            handler->SendSysMessage("Not enough available paragon points");
+            handler->SetSentErrorMessage(true);
+            player->SetAvailableParagonPoints(player->GetAvailableParagonPoints() - currentPoints);
+        }
+        return didSetStat;
+    }
+
+    static bool HandleParagonDefenseCommand(ChatHandler* handler, char const* args) {
+        if (!*args)
+            return false;
+
+        Player* player = handler->GetSession()->GetPlayer();
+
+        if (player->IsInCombat()) {
+            handler->SendSysMessage("Cannot set paragon stats during combat");
+            handler->SetSentErrorMessage(true);
+            return false;
+        }
+
+        int amount = 0;
+        bool assignAllPoints = false;
+        if (strcmp(args, "all") == 0) {
+            assignAllPoints = true;
+        }
+        else {
+            amount = atoi((char*)args);
+        }
+
+        uint32 _MAX_PARAGON_DEFENSE = (sWorld->getIntConfig(MAX_PARAGON_DEFENSE)) * 100;
+
+        if (assignAllPoints) {
+            amount = player->GetAvailableParagonPoints();
+        }
+
+        if (amount < 0) {
+            handler->PSendSysMessage("Invalid amount");
+            handler->SetSentErrorMessage(true);
+
+            return false;
+        }
+        if ((uint32)amount > _MAX_PARAGON_DEFENSE) {
+            amount = _MAX_PARAGON_DEFENSE;
+        }
+
+
+        uint32 currentPoints = player->GetParagonDefense();
+
+        player->SetAvailableParagonPoints(player->GetAvailableParagonPoints() + currentPoints);
+
+
+        const bool didSetStat = player->SetParagonDefense((uint32)amount, false);
+        if (didSetStat) {
+            std::string s = "";
+            if (amount == _MAX_PARAGON_DEFENSE) {
+                s = std::to_string(_MAX_PARAGON_DEFENSE);
+            }
+            else if (amount == 0) {
+                s = "0";
+            }
+            else {
+                std::stringstream stream;
+                stream << std::fixed << std::setprecision(3) << std::roundf((amount * 0.01));
+                std::string s = stream.str();
+            }
+            handler->PSendSysMessage("Paragon defense set to %u of %u (%s%%)", amount, _MAX_PARAGON_DEFENSE, s);
+        }
+        else {
+            handler->SendSysMessage("Not enough available paragon points");
+            handler->SetSentErrorMessage(true);
+            player->SetAvailableParagonPoints(player->GetAvailableParagonPoints() - currentPoints);
+        }
+        return didSetStat;
+    }
+
+    static bool HandleParagonHealCommand(ChatHandler* handler, char const* args) {
+        if (!*args)
+            return false;
+
+        Player* player = handler->GetSession()->GetPlayer();
+
+        if (player->IsInCombat()) {
+            handler->SendSysMessage("Cannot set paragon stats during combat");
+            handler->SetSentErrorMessage(true);
+            return false;
+        }
+
+        int amount = 0;
+        bool assignAllPoints = false;
+        if (strcmp(args, "all") == 0) {
+            assignAllPoints = true;
+        }
+        else {
+            amount = atoi((char*)args);
+        }
+
+        uint32 _MAX_PARAGON_HEAL = (sWorld->getIntConfig(MAX_PARAGON_HEAL)) * 100;
+
+        if (assignAllPoints) {
+            amount = player->GetAvailableParagonPoints();
+        }
+
+        if (amount < 0) {
+            handler->PSendSysMessage("Invalid amount");
+            handler->SetSentErrorMessage(true);
+
+            return false;
+        }
+        if ((uint32)amount > _MAX_PARAGON_HEAL) {
+            amount = _MAX_PARAGON_HEAL;
+        }
+
+
+        uint32 currentPoints = player->GetParagonHeal();
+
+        player->SetAvailableParagonPoints(player->GetAvailableParagonPoints() + currentPoints);
+
+
+        const bool didSetStat = player->SetParagonHeal((uint32)amount, false);
+        if (didSetStat) {
+            std::string s = "";
+            if (amount == _MAX_PARAGON_HEAL) {
+                s = std::to_string(_MAX_PARAGON_HEAL);
+            }
+            else if (amount == 0) {
+                s = "0";
+            }
+            else {
+                std::stringstream stream;
+                stream << std::fixed << std::setprecision(3) << std::roundf((amount * 0.01));
+                std::string s = stream.str();
+            }
+            handler->PSendSysMessage("Paragon heal set to %u of %u (%s%%)", amount, _MAX_PARAGON_HEAL, s);
+        }
+        else {
+            handler->SendSysMessage("Not enough available paragon points");
+            handler->SetSentErrorMessage(true);
+            player->SetAvailableParagonPoints(player->GetAvailableParagonPoints() - currentPoints);
+        }
+        return didSetStat;
+    }
+
+    static bool HandleParagonResetCommand(ChatHandler* handler, char const* args) {
+        Player* player = handler->GetSession()->GetPlayer();
 
         if (player->IsInCombat()) {
             handler->SendSysMessage("Cannot reset paragon stats during combat");
@@ -530,6 +733,37 @@ public:
             lifestealString = stream.str();
         }
 
+        std::string offenseString = "";
+        if (player->GetParagonOffense() == 0 || player->GetParagonOffense() == sWorld->getIntConfig(MAX_PARAGON_OFFENSE)) {
+            offenseString = std::to_string(player->GetParagonOffense());
+        }
+        else {
+            std::stringstream stream;
+            stream << std::fixed << std::setprecision(3) << std::roundf((player->GetParagonOffense() * 0.01));
+            offenseString = stream.str();
+        }
+
+        std::string defenseString = "";
+
+        if (player->GetParagonDefense() == 0 || player->GetParagonDefense() == sWorld->getIntConfig(MAX_PARAGON_DEFENSE)) {
+            defenseString = std::to_string(player->GetParagonDefense());
+        }
+        else {
+            std::stringstream stream;
+            stream << std::fixed << std::setprecision(3) << std::roundf((player->GetParagonDefense() * 0.01));
+            defenseString = stream.str();
+        }
+
+        std::string healString = "";
+
+        if (player->GetParagonHeal() == 0 || player->GetParagonHeal() == sWorld->getIntConfig(MAX_PARAGON_HEAL)) {
+            healString = std::to_string(player->GetParagonHeal());
+        }
+        else {
+            std::stringstream stream;
+            stream << std::fixed << std::setprecision(3) << std::roundf((player->GetParagonHeal() * 0.01));
+            healString = stream.str();
+        }
 
         handler->SendSysMessage("=== Paragon Level/XP ===");
         handler->PSendSysMessage("Level: %u", player->GetParagonLevel());
@@ -538,12 +772,16 @@ public:
 
         handler->SendSysMessage("=== Paragon stats ===");
 
-        handler->PSendSysMessage("Strength: %u", player->GetParagonStrength());
-        handler->PSendSysMessage("Agility: %u", player->GetParagonAgility());
-        handler->PSendSysMessage("Stamina: %u", player->GetParagonStamina());
-        handler->PSendSysMessage("Intellect: %u", player->GetParagonIntellect());
+       /* handler->PSendSysMessage("Strength: %u", player->GetParagonStrength());
+        handler->PSendSysMessage("Agility: %u", player->GetParagonAgility());*/
+        //handler->PSendSysMessage("Stamina: %u", player->GetParagonStamina());
+        /*handler->PSendSysMessage("Intellect: %u", player->GetParagonIntellect());
         handler->PSendSysMessage("Spirit: %u", player->GetParagonSpirit());
-        handler->PSendSysMessage("Spell power: %u", player->GetParagonSpellPower());
+        handler->PSendSysMessage("Spell power: %u", player->GetParagonSpellPower());*/
+        handler->PSendSysMessage("Offense: %s of %u %%", offenseString, sWorld->getIntConfig(MAX_PARAGON_OFFENSE));
+        handler->PSendSysMessage("Defense: %s of %u %%", defenseString, sWorld->getIntConfig(MAX_PARAGON_DEFENSE));
+        handler->PSendSysMessage("Heal: %s of %u %%", healString, sWorld->getIntConfig(MAX_PARAGON_HEAL));
+
         handler->PSendSysMessage("Lifesteal: %s of %u %%", lifestealString, sWorld->getIntConfig(MAX_PARAGON_LIFESTEAL));
         handler->PSendSysMessage("Available points: %u", player->GetAvailableParagonPoints());
 

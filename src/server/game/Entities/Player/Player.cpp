@@ -17850,6 +17850,9 @@ bool Player::LoadFromDB(ObjectGuid guid, CharacterDatabaseQueryHolder const& hol
     monsterLevel = fields[81].GetUInt16();
     paragonSpellPower = fields[82].GetUInt32();
     paragonLifesteal = fields[83].GetUInt32();
+    paragonOffense = fields[84].GetUInt16();
+    paragonDefense = fields[85].GetUInt16();
+    paragonHeal = fields[86].GetUInt16();
 
 
     UpdateAllStats();
@@ -18890,7 +18893,6 @@ void Player::_LoadBoundInstances(PreparedQueryResult result)
             }
 
             std::cout << "Load bound" << std::endl;
-            std::cout << "Monster level " + monsterLevel << std::endl;
 
             // since non permanent binds are always solo bind, they can always be reset
             if (InstanceSave* save = sInstanceSaveMgr->AddInstanceSave(mapId, instanceId, Difficulty(difficulty), resetTime, !perm, true, monsterLevel))
@@ -19629,7 +19631,9 @@ void Player::SaveToDB(CharacterDatabaseTransaction trans, bool create /* = false
         stmt->setUInt16(index++, GetMonsterLevel(true));
         stmt->setUInt32(index++, GetParagonSpellPower());
         stmt->setUInt32(index++, GetParagonLifesteal());
-
+        stmt->setUInt32(index++, GetParagonOffense());
+        stmt->setUInt32(index++, GetParagonDefense());
+        stmt->setUInt32(index++, GetParagonHeal());
 
         // Index
         stmt->setUInt32(index++, GetGUID().GetCounter());
@@ -27133,6 +27137,42 @@ bool Player::SetParagonLifesteal(uint32 paragonLifesteal, bool dontUpdateStats =
     }
     return false;
 }
+bool Player::SetParagonOffense(uint32 paragonOffense, bool dontUpdateStats = false) {
+    if (paragonPoints >= paragonOffense) {
+        this->paragonOffense = paragonOffense;
+        paragonPoints -= this->paragonOffense;
+
+        if (!dontUpdateStats) {
+            UpdateAllStats();
+        }
+        return true;
+    }
+    return false;
+}
+bool Player::SetParagonDefense(uint32 paragonDefense, bool dontUpdateStats = false) {
+    if (paragonPoints >= paragonDefense) {
+        this->paragonDefense = paragonDefense;
+        paragonPoints -= this->paragonDefense;
+
+        if (!dontUpdateStats) {
+            UpdateAllStats();
+        }
+        return true;
+    }
+    return false;
+}
+bool Player::SetParagonHeal(uint32 paragonHeal, bool dontUpdateStats = false) {
+    if (paragonPoints >= paragonHeal) {
+        this->paragonHeal = paragonHeal;
+        paragonPoints -= this->paragonHeal;
+
+        if (!dontUpdateStats) {
+            UpdateAllStats();
+        }
+        return true;
+    }
+    return false;
+}
 
 bool Player::SetParagonLevel(uint32 level) {
     if ((uint32) level > sObjectMgr->GetMaxParagonLevel()) {
@@ -27178,6 +27218,10 @@ void Player::ResetParagon() {
     paragonPoints += paragonSpirit;
     paragonPoints += paragonSpellPower;
     paragonPoints += paragonLifesteal;
+    paragonPoints += paragonOffense;
+    paragonPoints += paragonDefense;
+    paragonPoints += paragonHeal;
+
 
     paragonStrength = 0;
     paragonAgility = 0;
@@ -27186,6 +27230,9 @@ void Player::ResetParagon() {
     paragonSpirit = 0;
     paragonSpellPower = 0;
     paragonLifesteal = 0;
+    paragonOffense = 0;
+    paragonDefense = 0;
+    paragonHeal = 0;
 
     UpdateAllStats();
 }
@@ -27199,6 +27246,10 @@ uint32 Player::GetParagonSpirit() const { return paragonSpirit; }
 uint32 Player::GetParagonSpellPower() const { return paragonSpellPower; }
 uint32 Player::GetParagonLevel() const { return paragonLevel; }
 uint32 Player::GetParagonLifesteal() const { return paragonLifesteal; }
+uint32 Player::GetParagonOffense() const { return paragonOffense; }
+uint32 Player::GetParagonDefense() const { return paragonDefense; }
+uint32 Player::GetParagonHeal() const { return paragonHeal; }
+
 
 
 

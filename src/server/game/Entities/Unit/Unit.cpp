@@ -707,6 +707,27 @@ bool Unit::HasBreakableByDamageCrowdControlAura(Unit* excludeCasterChannel) cons
 {
     uint32 rage_damage = damage + (cleanDamage ? cleanDamage->absorbed_damage : 0);
 
+
+    /*if (attacker->IsPlayer()) {
+        Player* attackerAsPlayer = attacker->ToPlayer();
+        if (attackerAsPlayer->GetParagonOffense() > 0) {
+
+            uint32 extraDamage = damage * 0.01f * attackerAsPlayer->GetParagonOffense() * 0.01f;
+            damage += extraDamage;
+        }
+    }
+
+    if (victim->IsPlayer()) {
+        Player* victimAsPlayer = victim->ToPlayer();
+
+        if (victimAsPlayer->GetParagonDefense() > 0) {
+            uint32 lessDamage = damage * 0.01f * victimAsPlayer->GetParagonDefense() * 0.01f;
+            damage = (lessDamage > damage ? 1 : (damage - lessDamage < 0 ? 1 : damage - lessDamage));         
+        }
+    }*/
+
+   
+
     if (UnitAI* victimAI = victim->GetAI())
         victimAI->DamageTaken(attacker, damage, damagetype, spellProto);
 
@@ -990,7 +1011,8 @@ bool Unit::HasBreakableByDamageCrowdControlAura(Unit* excludeCasterChannel) cons
                 }
             }
         }
-    }
+        
+    }   
 
     return damage;
 }
@@ -6626,6 +6648,16 @@ uint32 Unit::SpellDamageBonusDone(Unit* victim, SpellInfo const* spellProto, uin
     if (Player* modOwner = GetSpellModOwner())
         modOwner->ApplySpellMod(spellProto->Id, damagetype == DOT ? SPELLMOD_DOT : SPELLMOD_DAMAGE, tmpDamage);
 
+
+    if (this->IsPlayer()) {
+        const Player* attackerAsPlayer = this->ToPlayer();
+        if (attackerAsPlayer->GetParagonOffense() > 0) {
+
+            uint32 extraDamage = tmpDamage * 0.01f * attackerAsPlayer->GetParagonOffense() * 0.01f;
+            tmpDamage += extraDamage;
+        }
+    }
+
     tmpDamage *= GetMonsterLevelDamageMultiplier();
 
     return uint32(std::max(tmpDamage, 0.0f));
@@ -7503,6 +7535,15 @@ uint32 Unit::SpellHealingBonusDone(Unit* victim, SpellInfo const* spellProto, ui
         }
     }
 
+    if (IsPlayer()) {
+        const Player* healerAsPlayer = ToPlayer();
+        if (healerAsPlayer->GetParagonHeal() > 0) {
+            uint32 extraHeal = heal * 0.01f * healerAsPlayer->GetParagonHeal() * 0.01f;
+            heal += extraHeal; // In percent
+        }
+    }
+
+
     return uint32(std::max(heal, 0.0f));
 }
 
@@ -7664,6 +7705,7 @@ int32 Unit::SpellBaseHealingBonusDone(SpellSchoolMask schoolMask) const
             if ((*i)->GetMiscValue() & schoolMask)
                 advertisedBenefit += int32(CalculatePct(GetTotalAttackPowerValue(BASE_ATTACK), (*i)->GetAmount()));
     }
+
     return advertisedBenefit;
 }
 
@@ -8015,6 +8057,15 @@ uint32 Unit::MeleeDamageBonusDone(Unit* victim, uint32 pdamage, WeaponAttackType
     }
 
     float tmpDamage = float(int32(pdamage) + DoneFlatBenefit) * DoneTotalMod;
+
+    if (this->IsPlayer()) {
+        const Player* attackerAsPlayer = this->ToPlayer();
+        if (attackerAsPlayer->GetParagonOffense() > 0) {
+
+            uint32 extraDamage = tmpDamage * 0.01f * attackerAsPlayer->GetParagonOffense() * 0.01f;
+            tmpDamage += extraDamage;
+        }
+    }
 
     // bonus result can be negative
     return uint32(std::max(tmpDamage, 0.0f));

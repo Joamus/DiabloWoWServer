@@ -2198,6 +2198,10 @@ class TC_GAME_API Player : public Unit, public GridObject<Player>
         uint32 GetParagonSpellPower() const;
         uint32 GetParagonLevel() const;
         uint32 GetParagonLifesteal() const;
+        uint32 GetParagonOffense() const;
+        uint32 GetParagonDefense() const;
+        uint32 GetParagonHeal() const;
+
 
         bool SetParagonStrength(uint32 paragonStrength, bool dontUpdateStats);
         bool SetParagonAgility(uint32 paragonAgility, bool dontUpdateStats);
@@ -2206,6 +2210,10 @@ class TC_GAME_API Player : public Unit, public GridObject<Player>
         bool SetParagonSpirit(uint32 paragonSpirit, bool dontUpdateStats);
         bool SetParagonSpellPower(uint32 paragonSpellPower, bool dontUpdateStats);
         bool SetParagonLifesteal(uint32 paragonLifesteal, bool dontUpdateStats);
+        bool SetParagonOffense(uint32 paragonLifesteal, bool dontUpdateStats);
+        bool SetParagonDefense(uint32 paragonLifesteal, bool dontUpdateStats);
+        bool SetParagonHeal(uint32 paragonLifesteal, bool dontUpdateStats);
+
         bool SetParagonLevel(uint32 level);
         void GiveParagonLevel(uint32 level);
         void ResetParagon();
@@ -2578,6 +2586,9 @@ class TC_GAME_API Player : public Unit, public GridObject<Player>
         uint32 paragonSpirit;
         uint32 paragonSpellPower;
         uint32 paragonLifesteal;
+        uint32 paragonOffense;
+        uint32 paragonDefense;
+        uint32 paragonHeal;
         uint32 paragonLevel;
         uint32 paragonXp;
         uint32 paragonPoints;
