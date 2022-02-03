@@ -10452,14 +10452,13 @@ ByteBuffer QuestPOIWrapper::BuildQueryData() const
 }
 
 uint32 ObjectMgr::GetParagonXpForLevel(uint32 level) const {
-    return sWorld->getIntConfig(PARAGON_XP_PER_LEVEL);
-   /* return
+    //return sWorld->getIntConfig(PARAGON_XP_PER_LEVEL);
     if (paragonXpInfo.size() < level) {
         throw;
     }
     else {
         return paragonXpInfo.find(level)->second;
-    }*/
+    }
 }
 
 bool ObjectMgr::LoadParagonXpInfo() {
@@ -10485,5 +10484,5 @@ bool ObjectMgr::LoadParagonXpInfo() {
 }
 
 uint32 ObjectMgr::GetMaxParagonLevel() const {
-    return sWorld->getIntConfig(MAX_PARAGON_LEVEL);
+    return paragonXpInfo.size();
 }

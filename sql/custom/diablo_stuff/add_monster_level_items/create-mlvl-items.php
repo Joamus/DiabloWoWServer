@@ -16,9 +16,6 @@ $mysqli = new mysqli("localhost", "trinity", "trinity", "world");
 // Drop items with monster lvl above 1 - it means this has been run before, so we just want to remake the items and not have duplicates
 $date = gmdate('Y_m_d');
 
-// echo "CREATE TABLE IF NOT EXISTS world.item_template_backup_$date LIKE world.item_template; INSERT INTO world.item_template_backup_$date SELECT * FROM world.item_template;";
-// exit;
-
 $mysqli->query("CREATE TABLE IF NOT EXISTS world.item_template_backup_$date LIKE world.item_template;");
 // $mysqli->query("INSERT INTO world.item_template_backup_$date SELECT * FROM world.item_template;");
 // $mysqli->query("DELETE FROM world.item_template WHERE monster_level > 1 AND inherit_from_item IS NOT NULL;");
@@ -140,6 +137,11 @@ function makeItem($entry, $row, $monster_level) {
     $values = [];
 
     foreach($row as $key => $val) {
+        if ($val == '') {
+            $val = '\'\'';
+        } else if (is_string($val)) {
+            $val = "'" . addslashes($val) . "'";
+        }
         if (array_key_exists($key, $new_item)) {
             array_push($values, $new_item[$key]);
         } else {
@@ -148,16 +150,18 @@ function makeItem($entry, $row, $monster_level) {
     }
 
     
+    
     $values_string = implode(',', $values);
     
     $insert = preg_replace("/{column_values}/", $values_string, $prepare_string);
 
     return $insert . ";\n";
     
-    
     // file_put_contents('create-mlvl-items.sql', $insert . ";", FILE_APPEND);
+   
     // $prepared_statment->bind_param($bind_string, ...$values);
     // $prepared_statment->execute();
+    // exit;
 }
 
 

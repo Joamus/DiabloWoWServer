@@ -707,27 +707,6 @@ bool Unit::HasBreakableByDamageCrowdControlAura(Unit* excludeCasterChannel) cons
 {
     uint32 rage_damage = damage + (cleanDamage ? cleanDamage->absorbed_damage : 0);
 
-
-    /*if (attacker->IsPlayer()) {
-        Player* attackerAsPlayer = attacker->ToPlayer();
-        if (attackerAsPlayer->GetParagonOffense() > 0) {
-
-            uint32 extraDamage = damage * 0.01f * attackerAsPlayer->GetParagonOffense() * 0.01f;
-            damage += extraDamage;
-        }
-    }
-
-    if (victim->IsPlayer()) {
-        Player* victimAsPlayer = victim->ToPlayer();
-
-        if (victimAsPlayer->GetParagonDefense() > 0) {
-            uint32 lessDamage = damage * 0.01f * victimAsPlayer->GetParagonDefense() * 0.01f;
-            damage = (lessDamage > damage ? 1 : (damage - lessDamage < 0 ? 1 : damage - lessDamage));         
-        }
-    }*/
-
-   
-
     if (UnitAI* victimAI = victim->GetAI())
         victimAI->DamageTaken(attacker, damage, damagetype, spellProto);
 
@@ -6653,7 +6632,7 @@ uint32 Unit::SpellDamageBonusDone(Unit* victim, SpellInfo const* spellProto, uin
         const Player* attackerAsPlayer = this->ToPlayer();
         if (attackerAsPlayer->GetParagonOffense() > 0) {
 
-            uint32 extraDamage = tmpDamage * 0.01f * attackerAsPlayer->GetParagonOffense() * 0.01f;
+            uint32 extraDamage = tmpDamage * 0.01f * attackerAsPlayer->GetParagonOffense() * 0.04f;
             tmpDamage += extraDamage;
         }
     }
@@ -7538,7 +7517,7 @@ uint32 Unit::SpellHealingBonusDone(Unit* victim, SpellInfo const* spellProto, ui
     if (IsPlayer()) {
         const Player* healerAsPlayer = ToPlayer();
         if (healerAsPlayer->GetParagonHeal() > 0) {
-            uint32 extraHeal = heal * 0.01f * healerAsPlayer->GetParagonHeal() * 0.01f;
+            uint32 extraHeal = heal * 0.01f * healerAsPlayer->GetParagonHeal() * 0.04f;
             heal += extraHeal; // In percent
         }
     }
@@ -8062,7 +8041,7 @@ uint32 Unit::MeleeDamageBonusDone(Unit* victim, uint32 pdamage, WeaponAttackType
         const Player* attackerAsPlayer = this->ToPlayer();
         if (attackerAsPlayer->GetParagonOffense() > 0) {
 
-            uint32 extraDamage = tmpDamage * 0.01f * attackerAsPlayer->GetParagonOffense() * 0.01f;
+            uint32 extraDamage = tmpDamage * 0.01f * attackerAsPlayer->GetParagonOffense() * 0.04f;
             tmpDamage += extraDamage;
         }
     }

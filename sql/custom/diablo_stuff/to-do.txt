@@ -1,0 +1,30 @@
+Emblem Items:
+
+- Make Emblem of Frost etc in different mlvl versions
+- Make ItemExtendedCost entries for all the items that normally have can be bought with Emblem of Frost
+
+
+
+- REMEMBER: ItemExtendedCost.dbc has to be changed a new patch has to be made, if new currencies are added
+
+
+Vehicle damage in dungeons:
+- Make vehicle damage modifier for dungeons, so dungeons that require vehicles to do damage, now will do more damage the less people you are. 
+Makes it possible to do 25 mans more easily with a few people.
+
+Formula: damage * (dungeon_max_players/amount_of_group_members);
+
+
+- Paragon:
+Lifesteal 20/20
+Healing 100
+Offense 100
+Defense 75/75
+
+
+
+Paragon offense/defense
+- Make two new paragon stats, that can give 50% damage/heal increase and 50% damage reduction. 1% should cost 100 paragon points
+
+
+
