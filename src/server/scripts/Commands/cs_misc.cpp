@@ -739,7 +739,7 @@ public:
         }
         else {
             std::stringstream stream;
-            stream << std::fixed << std::setprecision(3) << std::roundf((player->GetParagonOffense() * 0.4f));
+            stream << std::fixed << std::setprecision(3) << std::roundf((player->GetParagonOffense() * 0.04f));
             offenseString = stream.str();
         }
 
@@ -750,7 +750,7 @@ public:
         }
         else {
             std::stringstream stream;
-            stream << std::fixed << std::setprecision(3) << std::roundf((player->GetParagonDefense() * 0.4f));
+            stream << std::fixed << std::setprecision(3) << std::roundf((player->GetParagonDefense() * 0.04f));
             defenseString = stream.str();
         }
 
@@ -761,7 +761,7 @@ public:
         }
         else {
             std::stringstream stream;
-            stream << std::fixed << std::setprecision(3) << std::roundf((player->GetParagonHeal() * 0.4f));
+            stream << std::fixed << std::setprecision(3) << std::roundf((player->GetParagonHeal() * 0.04f));
             healString = stream.str();
         }
 

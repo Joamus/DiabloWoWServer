@@ -337,7 +337,7 @@ void Player::UpdateMaxHealth()
     value += GetFlatModifierValue(unitMod, TOTAL_VALUE) + GetHealthBonusFromStamina();
     value *= GetPctModifierValue(unitMod, TOTAL_PCT);
 
-    uint32 extraHealth = value * 0.01f * GetParagonDefense() * 0.4f;
+    uint32 extraHealth = value * 0.01f * GetParagonDefense() * 0.04f;
     value += extraHealth;
 
     SetMaxHealth((uint32)value);
