@@ -778,9 +778,9 @@ public:
         /*handler->PSendSysMessage("Intellect: %u", player->GetParagonIntellect());
         handler->PSendSysMessage("Spirit: %u", player->GetParagonSpirit());
         handler->PSendSysMessage("Spell power: %u", player->GetParagonSpellPower());*/
-        handler->PSendSysMessage("Offense: %s of %u %%", offenseString, sWorld->getIntConfig(MAX_PARAGON_OFFENSE));
-        handler->PSendSysMessage("Defense: %s of %u %%", defenseString, sWorld->getIntConfig(MAX_PARAGON_DEFENSE));
-        handler->PSendSysMessage("Heal: %s of %u %%", healString, sWorld->getIntConfig(MAX_PARAGON_HEAL));
+        handler->PSendSysMessage("Offense: %s of %u %%", offenseString, sWorld->getIntConfig(MAX_PARAGON_OFFENSE) * 4);
+        handler->PSendSysMessage("Defense: %s of %u %%", defenseString, sWorld->getIntConfig(MAX_PARAGON_DEFENSE) * 4);
+        handler->PSendSysMessage("Heal: %s of %u %%", healString, sWorld->getIntConfig(MAX_PARAGON_HEAL) * 4);
 
         handler->PSendSysMessage("Lifesteal: %s of %u %%", lifestealString, sWorld->getIntConfig(MAX_PARAGON_LIFESTEAL));
         handler->PSendSysMessage("Available points: %u", player->GetAvailableParagonPoints());
