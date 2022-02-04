@@ -739,7 +739,7 @@ public:
         }
         else {
             std::stringstream stream;
-            stream << std::fixed << std::setprecision(3) << std::roundf((player->GetParagonOffense() * 0.04f));
+            stream << std::fixed << std::setprecision(3) << std::roundf((player->GetParagonOffense() * 0.1f));
             offenseString = stream.str();
         }
 
@@ -750,7 +750,7 @@ public:
         }
         else {
             std::stringstream stream;
-            stream << std::fixed << std::setprecision(3) << std::roundf((player->GetParagonDefense() * 0.04f));
+            stream << std::fixed << std::setprecision(3) << std::roundf((player->GetParagonDefense() * 0.1f));
             defenseString = stream.str();
         }
 
@@ -761,7 +761,7 @@ public:
         }
         else {
             std::stringstream stream;
-            stream << std::fixed << std::setprecision(3) << std::roundf((player->GetParagonHeal() * 0.04f));
+            stream << std::fixed << std::setprecision(3) << std::roundf((player->GetParagonHeal() * 0.1f));
             healString = stream.str();
         }
 
@@ -778,9 +778,9 @@ public:
         /*handler->PSendSysMessage("Intellect: %u", player->GetParagonIntellect());
         handler->PSendSysMessage("Spirit: %u", player->GetParagonSpirit());
         handler->PSendSysMessage("Spell power: %u", player->GetParagonSpellPower());*/
-        handler->PSendSysMessage("Offense: %s of %u %%", offenseString, sWorld->getIntConfig(MAX_PARAGON_OFFENSE) * 4);
-        handler->PSendSysMessage("Defense: %s of %u %%", defenseString, sWorld->getIntConfig(MAX_PARAGON_DEFENSE) * 4);
-        handler->PSendSysMessage("Heal: %s of %u %%", healString, sWorld->getIntConfig(MAX_PARAGON_HEAL) * 4);
+        handler->PSendSysMessage("Offense: %s of %u %%", offenseString, (sWorld->getIntConfig(MAX_PARAGON_OFFENSE) * 10));
+        handler->PSendSysMessage("Defense: %s of %u %%", defenseString, (sWorld->getIntConfig(MAX_PARAGON_DEFENSE) * 10));
+        handler->PSendSysMessage("Heal: %s of %u %%", healString, (sWorld->getIntConfig(MAX_PARAGON_HEAL) * 10));
 
         handler->PSendSysMessage("Lifesteal: %s of %u %%", lifestealString, sWorld->getIntConfig(MAX_PARAGON_LIFESTEAL));
         handler->PSendSysMessage("Available points: %u", player->GetAvailableParagonPoints());

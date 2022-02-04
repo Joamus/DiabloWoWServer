@@ -6632,7 +6632,7 @@ uint32 Unit::SpellDamageBonusDone(Unit* victim, SpellInfo const* spellProto, uin
         const Player* attackerAsPlayer = this->ToPlayer();
         if (attackerAsPlayer->GetParagonOffense() > 0) {
 
-            uint32 extraDamage = tmpDamage * 0.01f * attackerAsPlayer->GetParagonOffense() * 0.04f;
+            uint32 extraDamage = tmpDamage * 0.01f * attackerAsPlayer->GetParagonOffense() * 0.1f;
             tmpDamage += extraDamage;
         }
     }
@@ -7517,7 +7517,7 @@ uint32 Unit::SpellHealingBonusDone(Unit* victim, SpellInfo const* spellProto, ui
     if (IsPlayer()) {
         const Player* healerAsPlayer = ToPlayer();
         if (healerAsPlayer->GetParagonHeal() > 0) {
-            uint32 extraHeal = heal * 0.01f * healerAsPlayer->GetParagonHeal() * 0.04f;
+            uint32 extraHeal = heal * 0.01f * healerAsPlayer->GetParagonHeal() * 0.1f;
             heal += extraHeal; // In percent
         }
     }
@@ -8041,7 +8041,7 @@ uint32 Unit::MeleeDamageBonusDone(Unit* victim, uint32 pdamage, WeaponAttackType
         const Player* attackerAsPlayer = this->ToPlayer();
         if (attackerAsPlayer->GetParagonOffense() > 0) {
 
-            uint32 extraDamage = tmpDamage * 0.01f * attackerAsPlayer->GetParagonOffense() * 0.04f;
+            uint32 extraDamage = tmpDamage * 0.01f * attackerAsPlayer->GetParagonOffense() * 0.1f;
             tmpDamage += extraDamage;
         }
     }
