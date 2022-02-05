@@ -17850,9 +17850,9 @@ bool Player::LoadFromDB(ObjectGuid guid, CharacterDatabaseQueryHolder const& hol
     monsterLevel = fields[81].GetUInt16();
     paragonSpellPower = fields[82].GetUInt32();
     paragonLifesteal = fields[83].GetUInt32();
-    paragonOffense = fields[84].GetUInt16();
-    paragonDefense = fields[85].GetUInt16();
-    paragonHeal = fields[86].GetUInt16();
+    paragonOffense = fields[84].GetUInt32();
+    paragonDefense = fields[85].GetUInt32();
+    paragonHeal = fields[86].GetUInt32();
 
 
     UpdateAllStats();
