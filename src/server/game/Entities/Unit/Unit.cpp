@@ -6628,8 +6628,8 @@ uint32 Unit::SpellDamageBonusDone(Unit* victim, SpellInfo const* spellProto, uin
         modOwner->ApplySpellMod(spellProto->Id, damagetype == DOT ? SPELLMOD_DOT : SPELLMOD_DAMAGE, tmpDamage);
 
 
-    if (this->IsPlayer()) {
-        const Player* attackerAsPlayer = this->ToPlayer();
+    if (this->IsPlayer() || this->IsPet() && this->IsControlledByPlayer()) {
+        const Player* attackerAsPlayer = this->IsPet() ? this->GetOwner()->ToPlayer() : this->ToPlayer();
         if (attackerAsPlayer->GetParagonOffense() > 0) {
 
             uint32 extraDamage = tmpDamage * 0.01f * attackerAsPlayer->GetParagonOffense() * 0.1f;
@@ -8037,8 +8037,8 @@ uint32 Unit::MeleeDamageBonusDone(Unit* victim, uint32 pdamage, WeaponAttackType
 
     float tmpDamage = float(int32(pdamage) + DoneFlatBenefit) * DoneTotalMod;
 
-    if (this->IsPlayer()) {
-        const Player* attackerAsPlayer = this->ToPlayer();
+    if (this->IsPlayer() || this->IsPet() && this->GetOwner()->IsPlayer()) {
+        const Player* attackerAsPlayer = this->IsPet() ? this->GetOwner()->ToPlayer() : this->ToPlayer();
         if (attackerAsPlayer->GetParagonOffense() > 0) {
 
             uint32 extraDamage = tmpDamage * 0.01f * attackerAsPlayer->GetParagonOffense() * 0.1f;
