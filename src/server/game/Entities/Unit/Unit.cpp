@@ -976,7 +976,7 @@ bool Unit::HasBreakableByDamageCrowdControlAura(Unit* excludeCasterChannel) cons
     {
         Player* attackerAsPlayer = attacker->IsPet() ? attacker->GetOwner()->ToPlayer() : attacker->ToPlayer();
         if (attackerAsPlayer->GetParagonLifesteal() > 0) {
-            uint32 healthGain = damage * (attackerAsPlayer->GetParagonLifesteal() * 0.01 * 0.01); // In percent
+            uint32 healthGain = damage * 0.01f * (attackerAsPlayer->GetParagonLifesteal() * 0.005f); // In percent
             if (attacker->IsPet()) {
                 if (Unit* pet = attackerAsPlayer->GetGuardianPet()) {
                     pet->ModifyHealth((int32)healthGain);
@@ -8037,7 +8037,7 @@ uint32 Unit::MeleeDamageBonusDone(Unit* victim, uint32 pdamage, WeaponAttackType
 
     float tmpDamage = float(int32(pdamage) + DoneFlatBenefit) * DoneTotalMod;
 
-    if (this->IsPlayer() || this->IsPet() && this->GetOwner()->IsPlayer()) {
+    if (this->IsPlayer() || this->IsPet() && this-IsControlledByPlayer()) {
         const Player* attackerAsPlayer = this->IsPet() ? this->GetOwner()->ToPlayer() : this->ToPlayer();
         if (attackerAsPlayer->GetParagonOffense() > 0) {
 

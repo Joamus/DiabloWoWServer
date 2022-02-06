@@ -729,7 +729,7 @@ public:
         }
         else {
             std::stringstream stream;
-            stream << std::fixed << std::setprecision(3) << std::roundf((player->GetParagonLifesteal() * 0.01f));
+            stream << std::fixed << std::setprecision(3) << std::roundf((player->GetParagonLifesteal() * 0.005f));
             lifestealString = stream.str();
         }
 
