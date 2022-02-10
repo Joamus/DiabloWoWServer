@@ -1899,7 +1899,24 @@ private:
 
     void CalculateDamage(SpellEffIndex /*effIndex*/)
     {
-        SetEffectValue(GetEffectValue() + _energyLeft * _energyLeft * 8);
+        uint32 playerCount = 1;
+        uint32 raidCount = 25;
+        if (Unit* caster = GetCaster()) {
+            if (caster->IsPlayer()) {
+                if (Map* map = caster->GetMap()) {
+                    playerCount = map->GetPlayersCountExceptGMs();
+                    if (map->Is25ManRaid()) {
+                        raidCount = 25;
+                    }
+                    else if (map->IsRaid()) {
+                        raidCount = 10;
+                    }
+                }
+            }
+        }
+
+        uint32 factor = (raidCount / (playerCount > 0 ? playerCount : 1));
+        SetEffectValue(GetEffectValue() + _energyLeft * _energyLeft * 8 * factor);
     }
 
     void Register() override
