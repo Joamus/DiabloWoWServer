@@ -315,6 +315,23 @@ struct boss_valithria_dreamwalker : public ScriptedAI
 
     void HealReceived(Unit* healer, uint32& heal) override
     {
+        uint32 playerCount = 1;
+        uint32 raidCount = 25;
+        if (healer->IsPlayer()) {
+            if (Map* map = healer->GetMap()) {
+                playerCount = map->GetPlayersCountExceptGMs();
+                if (map->Is25ManRaid()) {
+                    raidCount = 25;
+                }
+                else if (map->IsRaid()) {
+                    raidCount = 10;
+                }
+            }
+        }
+
+        uint32 factor = (raidCount / (playerCount > 0 ? playerCount : 1));
+        heal *= (factor * 1.5f);
+
         if (!me->hasLootRecipient())
             me->SetLootRecipient(healer);
 
