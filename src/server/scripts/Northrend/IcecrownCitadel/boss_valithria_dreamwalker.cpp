@@ -329,7 +329,7 @@ struct boss_valithria_dreamwalker : public ScriptedAI
             }
         }
 
-        uint32 factor = (raidCount / (playerCount > 0 ? playerCount : 1));
+        float factor = (raidCount / (playerCount > 0 ? (playerCount * 0.5f) : 1));
         heal *= factor;
 
         if (!me->hasLootRecipient())

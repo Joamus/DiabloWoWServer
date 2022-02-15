@@ -457,19 +457,36 @@ class spell_gen_bandage : public SpellScript
             GetCaster()->CastSpell(target, SPELL_RECENTLY_BANDAGED, true);
     }
 
+    //void CalculateDamage() {
+    //    
+    //}
+    //void CalculateAmount(AuraEffect const* aurEff, int32& amount, bool& /*canBeRecalculated*/)
+    //{
+    //    if (!aurEff->GetTotalTicks())
+    //        return;
+
+    //    if (GetCaster()->IsPlayer()) {
+    //        const Player* healerAsPlayer = GetCaster()->ToPlayer();
+    //        if (healerAsPlayer->GetParagonHeal() > 0) {
+    //            uint32 extraHeal = GetEffectValue() * 0.01f * healerAsPlayer->GetParagonHeal() * 0.1f;
+    //            SetEffectValue(GetEffectValue() + extraHeal); // In percent
+    //        }
+    //    }
+    //    
+
+    //    if (Unit* owner = GetUnitOwner())
+    //        amount += int32(CalculatePct(owner->GetMaxHealth(), 1.5f / aurEff->GetTotalTicks()));
+    //}
+
     void Register() override
     {
         OnCheckCast += SpellCheckCastFn(spell_gen_bandage::CheckCast);
         AfterHit += SpellHitFn(spell_gen_bandage::HandleScript);
 
-        if (GetCaster()->IsPlayer()) {
-            const Player* healerAsPlayer = GetCaster()->ToPlayer();
-            if (healerAsPlayer->GetParagonHeal() > 0) {
-                uint32 extraHeal = GetEffectValue() * 0.01f * healerAsPlayer->GetParagonHeal() * 0.1f;
-                SetEffectValue(GetEffectValue() + extraHeal); // In percent
-            }
-        }
+
+ 
     }
+
 };
 
 enum BlackMagicSpellIconId
