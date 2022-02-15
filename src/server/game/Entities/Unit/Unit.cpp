@@ -6493,6 +6493,9 @@ void Unit::EnergizeBySpell(Unit* victim, SpellInfo const* spellInfo, int32 damag
 uint32 Unit::SpellDamageBonusDone(Unit* victim, SpellInfo const* spellProto, uint32 pdamage, DamageEffectType damagetype, SpellEffectInfo const& spellEffectInfo, Optional<float> const& donePctTotal, uint32 stack /*= 1*/) const
 {
 
+    if (!spellProto || !victim || damagetype == DIRECT_DAMAGE)
+        return pdamage;
+
     if (this->IsPlayer() || this->IsPet() && this->IsControlledByPlayer()) {
         const Player* attackerAsPlayer = this->IsPet() ? this->GetOwner()->ToPlayer() : this->ToPlayer();
         if (attackerAsPlayer->GetParagonOffense() > 0) {
@@ -6501,11 +6504,6 @@ uint32 Unit::SpellDamageBonusDone(Unit* victim, SpellInfo const* spellProto, uin
             pdamage += extraDamage;
         }
     }
-
-
-    if (!spellProto || !victim || damagetype == DIRECT_DAMAGE)
-        return pdamage;
-
     // Some spells don't benefit from done mods
     if (spellProto->HasAttribute(SPELL_ATTR3_NO_DONE_BONUS))
         return pdamage;
@@ -7382,6 +7380,15 @@ uint32 Unit::SpellHealingBonusDone(Unit* victim, SpellInfo const* spellProto, ui
     if (spellProto->SpellFamilyName == SPELLFAMILY_POTION)
         return healamount;
 
+
+    if (IsPlayer()) {
+        const Player* healerAsPlayer = ToPlayer();
+        if (healerAsPlayer->GetParagonHeal() > 0) {
+            uint32 extraHeal = healamount * 0.01f * healerAsPlayer->GetParagonHeal() * 0.1f;
+            healamount += extraHeal; // In percent
+        }
+    }
+
     float ApCoeffMod = 1.0f;
     int32 DoneTotal = 0;
     float DoneTotalMod = donePctTotal ? *donePctTotal : SpellHealingPctDone(victim, spellProto);
@@ -7517,15 +7524,6 @@ uint32 Unit::SpellHealingBonusDone(Unit* victim, SpellInfo const* spellProto, ui
             heal *= GetMonsterLevelDamageMultiplier();
         }
     }
-
-    if (IsPlayer()) {
-        const Player* healerAsPlayer = ToPlayer();
-        if (healerAsPlayer->GetParagonHeal() > 0) {
-            uint32 extraHeal = heal * 0.01f * healerAsPlayer->GetParagonHeal() * 0.1f;
-            heal += extraHeal; // In percent
-        }
-    }
-
 
     return uint32(std::max(heal, 0.0f));
 }
