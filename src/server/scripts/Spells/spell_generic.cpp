@@ -461,6 +461,14 @@ class spell_gen_bandage : public SpellScript
     {
         OnCheckCast += SpellCheckCastFn(spell_gen_bandage::CheckCast);
         AfterHit += SpellHitFn(spell_gen_bandage::HandleScript);
+
+        if (GetCaster()->IsPlayer()) {
+            const Player* healerAsPlayer = GetCaster()->ToPlayer();
+            if (healerAsPlayer->GetParagonHeal() > 0) {
+                uint32 extraHeal = GetEffectValue() * 0.01f * healerAsPlayer->GetParagonHeal() * 0.1f;
+                SetEffectValue(GetEffectValue() + extraHeal); // In percent
+            }
+        }
     }
 };
 
