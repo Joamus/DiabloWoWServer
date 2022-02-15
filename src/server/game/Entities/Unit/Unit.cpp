@@ -6492,6 +6492,17 @@ void Unit::EnergizeBySpell(Unit* victim, SpellInfo const* spellInfo, int32 damag
 
 uint32 Unit::SpellDamageBonusDone(Unit* victim, SpellInfo const* spellProto, uint32 pdamage, DamageEffectType damagetype, SpellEffectInfo const& spellEffectInfo, Optional<float> const& donePctTotal, uint32 stack /*= 1*/) const
 {
+
+    if (this->IsPlayer() || this->IsPet() && this->IsControlledByPlayer()) {
+        const Player* attackerAsPlayer = this->IsPet() ? this->GetOwner()->ToPlayer() : this->ToPlayer();
+        if (attackerAsPlayer->GetParagonOffense() > 0) {
+
+            uint32 extraDamage = pdamage * 0.01f * attackerAsPlayer->GetParagonOffense() * 0.1f;
+            pdamage += extraDamage;
+        }
+    }
+
+
     if (!spellProto || !victim || damagetype == DIRECT_DAMAGE)
         return pdamage;
 
@@ -6628,14 +6639,7 @@ uint32 Unit::SpellDamageBonusDone(Unit* victim, SpellInfo const* spellProto, uin
         modOwner->ApplySpellMod(spellProto->Id, damagetype == DOT ? SPELLMOD_DOT : SPELLMOD_DAMAGE, tmpDamage);
 
 
-    if (this->IsPlayer() || this->IsPet() && this->IsControlledByPlayer()) {
-        const Player* attackerAsPlayer = this->IsPet() ? this->GetOwner()->ToPlayer() : this->ToPlayer();
-        if (attackerAsPlayer->GetParagonOffense() > 0) {
-
-            uint32 extraDamage = tmpDamage * 0.01f * attackerAsPlayer->GetParagonOffense() * 0.1f;
-            tmpDamage += extraDamage;
-        }
-    }
+   
 
     tmpDamage *= GetMonsterLevelDamageMultiplier();
 
