@@ -260,8 +260,9 @@ struct boss_valithria_dreamwalker : public ScriptedAI
     boss_valithria_dreamwalker(Creature* creature) : ScriptedAI(creature), _instance(creature->GetInstanceScript()), _portalCount(RAID_MODE<uint32>(3, 8, 3, 8))
     {
         Initialize();
-        _spawnHealth = me->GetHealth();
+        _spawnHealth = me->GetHealth() * 1.7f;
     }
+
 
     void Initialize()
     {
