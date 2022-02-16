@@ -6494,18 +6494,26 @@ uint32 Unit::SpellDamageBonusDone(Unit* victim, SpellInfo const* spellProto, uin
 {
 
     if (!spellProto || !victim || damagetype == DIRECT_DAMAGE)
+        if (this->IsPlayer() || this->IsPet() && this->IsControlledByPlayer()) {
+            const Player* attackerAsPlayer = this->IsPet() ? this->GetOwner()->ToPlayer() : this->ToPlayer();
+            if (attackerAsPlayer->GetParagonOffense() > 0) {
+
+                uint32 extraDamage = pdamage * 0.01f * attackerAsPlayer->GetParagonOffense() * 0.1f;
+                pdamage += extraDamage;
+            }
+        }
         return pdamage;
 
-    if (this->IsPlayer() || this->IsPet() && this->IsControlledByPlayer()) {
-        const Player* attackerAsPlayer = this->IsPet() ? this->GetOwner()->ToPlayer() : this->ToPlayer();
-        if (attackerAsPlayer->GetParagonOffense() > 0) {
-
-            uint32 extraDamage = pdamage * 0.01f * attackerAsPlayer->GetParagonOffense() * 0.1f;
-            pdamage += extraDamage;
-        }
-    }
     // Some spells don't benefit from done mods
     if (spellProto->HasAttribute(SPELL_ATTR3_NO_DONE_BONUS))
+        if (this->IsPlayer() || this->IsPet() && this->IsControlledByPlayer()) {
+            const Player* attackerAsPlayer = this->IsPet() ? this->GetOwner()->ToPlayer() : this->ToPlayer();
+            if (attackerAsPlayer->GetParagonOffense() > 0) {
+
+                uint32 extraDamage = pdamage * 0.01f * attackerAsPlayer->GetParagonOffense() * 0.1f;
+                pdamage += extraDamage;
+            }
+        }
         return pdamage;
 
     // For totems get damage bonus from owner
@@ -6636,7 +6644,14 @@ uint32 Unit::SpellDamageBonusDone(Unit* victim, SpellInfo const* spellProto, uin
     if (Player* modOwner = GetSpellModOwner())
         modOwner->ApplySpellMod(spellProto->Id, damagetype == DOT ? SPELLMOD_DOT : SPELLMOD_DAMAGE, tmpDamage);
 
+    if (this->IsPlayer() || this->IsPet() && this->IsControlledByPlayer()) {
+        const Player* attackerAsPlayer = this->IsPet() ? this->GetOwner()->ToPlayer() : this->ToPlayer();
+        if (attackerAsPlayer->GetParagonOffense() > 0) {
 
+            uint32 extraDamage = tmpDamage * 0.01f * attackerAsPlayer->GetParagonOffense() * 0.1f;
+            tmpDamage += extraDamage;
+        }
+    }
    
 
     tmpDamage *= GetMonsterLevelDamageMultiplier();
@@ -7381,14 +7396,6 @@ uint32 Unit::SpellHealingBonusDone(Unit* victim, SpellInfo const* spellProto, ui
         return healamount;
 
 
-    if (IsPlayer()) {
-        const Player* healerAsPlayer = ToPlayer();
-        if (healerAsPlayer->GetParagonHeal() > 0) {
-            uint32 extraHeal = healamount * 0.01f * healerAsPlayer->GetParagonHeal() * 0.1f;
-            healamount += extraHeal; // In percent
-        }
-    }
-
     float ApCoeffMod = 1.0f;
     int32 DoneTotal = 0;
     float DoneTotalMod = donePctTotal ? *donePctTotal : SpellHealingPctDone(victim, spellProto);
@@ -7477,6 +7484,13 @@ uint32 Unit::SpellHealingBonusDone(Unit* victim, SpellInfo const* spellProto, ui
     {
         // No bonus healing for SPELL_DAMAGE_CLASS_NONE class spells by default
         if (spellProto->DmgClass == SPELL_DAMAGE_CLASS_NONE)
+            if (IsPlayer()) {
+                const Player* healerAsPlayer = ToPlayer();
+                if (healerAsPlayer->GetParagonHeal() > 0) {
+                    uint32 extraHeal = healamount * 0.01f * healerAsPlayer->GetParagonHeal() * 0.1f;
+                    healamount += extraHeal; // In percent
+                }
+            }
             return uint32(std::max(healamount * DoneTotalMod, 0.0f));
     }
 
@@ -7522,6 +7536,14 @@ uint32 Unit::SpellHealingBonusDone(Unit* victim, SpellInfo const* spellProto, ui
     if (IsCreature()) {
         if (GetMonsterLevel() > 1) {
             heal *= GetMonsterLevelDamageMultiplier();
+        }
+    }
+
+    if (IsPlayer()) {
+        const Player* healerAsPlayer = ToPlayer();
+        if (healerAsPlayer->GetParagonHeal() > 0) {
+            uint32 extraHeal = heal * 0.01f * healerAsPlayer->GetParagonHeal() * 0.1f;
+            heal += extraHeal; // In percent
         }
     }
 
