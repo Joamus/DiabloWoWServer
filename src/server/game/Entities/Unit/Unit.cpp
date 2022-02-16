@@ -6619,8 +6619,18 @@ uint32 Unit::SpellDamageBonusDone(Unit* victim, SpellInfo const* spellProto, uin
     else
     {
         // No bonus damage for SPELL_DAMAGE_CLASS_NONE class spells by default
-        if (spellProto->DmgClass == SPELL_DAMAGE_CLASS_NONE)
+        if (spellProto->DmgClass == SPELL_DAMAGE_CLASS_NONE) {
+            if (this->IsPlayer() || this->IsPet() && this->IsControlledByPlayer()) {
+                const Player* attackerAsPlayer = this->IsPet() ? this->GetOwner()->ToPlayer() : this->ToPlayer();
+                if (attackerAsPlayer->GetParagonOffense() > 0) {
+
+                    uint32 extraDamage = pdamage * 0.01f * attackerAsPlayer->GetParagonOffense() * 0.1f;
+                    pdamage += extraDamage;
+                }
+            }
             return uint32(std::max(pdamage * DoneTotalMod, 0.0f));
+
+        }
     }
 
     // Default calculation
