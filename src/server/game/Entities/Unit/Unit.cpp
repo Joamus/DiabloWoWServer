@@ -6493,7 +6493,7 @@ void Unit::EnergizeBySpell(Unit* victim, SpellInfo const* spellInfo, int32 damag
 uint32 Unit::SpellDamageBonusDone(Unit* victim, SpellInfo const* spellProto, uint32 pdamage, DamageEffectType damagetype, SpellEffectInfo const& spellEffectInfo, Optional<float> const& donePctTotal, uint32 stack /*= 1*/) const
 {
 
-    if (!spellProto || !victim || damagetype == DIRECT_DAMAGE)
+    if (!spellProto || !victim || damagetype == DIRECT_DAMAGE) {
         if (this->IsPlayer() || this->IsPet() && this->IsControlledByPlayer()) {
             const Player* attackerAsPlayer = this->IsPet() ? this->GetOwner()->ToPlayer() : this->ToPlayer();
             if (attackerAsPlayer->GetParagonOffense() > 0) {
@@ -6503,9 +6503,10 @@ uint32 Unit::SpellDamageBonusDone(Unit* victim, SpellInfo const* spellProto, uin
             }
         }
         return pdamage;
+    }
 
     // Some spells don't benefit from done mods
-    if (spellProto->HasAttribute(SPELL_ATTR3_NO_DONE_BONUS))
+    if (spellProto->HasAttribute(SPELL_ATTR3_NO_DONE_BONUS)) {
         if (this->IsPlayer() || this->IsPet() && this->IsControlledByPlayer()) {
             const Player* attackerAsPlayer = this->IsPet() ? this->GetOwner()->ToPlayer() : this->ToPlayer();
             if (attackerAsPlayer->GetParagonOffense() > 0) {
@@ -6515,6 +6516,7 @@ uint32 Unit::SpellDamageBonusDone(Unit* victim, SpellInfo const* spellProto, uin
             }
         }
         return pdamage;
+    }
 
     // For totems get damage bonus from owner
     if (GetTypeId() == TYPEID_UNIT && IsTotem())
@@ -7483,7 +7485,7 @@ uint32 Unit::SpellHealingBonusDone(Unit* victim, SpellInfo const* spellProto, ui
     else
     {
         // No bonus healing for SPELL_DAMAGE_CLASS_NONE class spells by default
-        if (spellProto->DmgClass == SPELL_DAMAGE_CLASS_NONE)
+        if (spellProto->DmgClass == SPELL_DAMAGE_CLASS_NONE) {
             if (IsPlayer()) {
                 const Player* healerAsPlayer = ToPlayer();
                 if (healerAsPlayer->GetParagonHeal() > 0) {
@@ -7492,6 +7494,7 @@ uint32 Unit::SpellHealingBonusDone(Unit* victim, SpellInfo const* spellProto, ui
                 }
             }
             return uint32(std::max(healamount * DoneTotalMod, 0.0f));
+        }
     }
 
     // Default calculation
