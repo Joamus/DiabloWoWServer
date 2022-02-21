@@ -316,16 +316,46 @@ struct boss_valithria_dreamwalker : public ScriptedAI
 
     void HealReceived(Unit* healer, uint32& heal) override
     {
+        // Makes it possible to skip Vali.
+        _done = true;
+        Talk(SAY_VALITHRIA_SUCCESS);
+        _instance->SendEncounterUnit(ENCOUNTER_FRAME_DISENGAGE, me);
+        me->RemoveAurasDueToSpell(SPELL_CORRUPTION_VALITHRIA);
+        DoCastSelf(SPELL_ACHIEVEMENT_CHECK);
+        DoCastAOE(SPELL_DREAMWALKERS_RAGE);
+        _events.ScheduleEvent(EVENT_DREAM_SLIP, 3500ms);
+        if (Creature* lichKing = ObjectAccessor::GetCreature(*me, _instance->GetGuidData(DATA_VALITHRIA_LICH_KING)))
+            lichKing->AI()->EnterEvadeMode();
+
+        return;
+
+
+
+
+
+
+
+
         uint32 playerCount = 1;
         uint32 raidCount = 25;
         if (healer->IsPlayer()) {
             if (Map* map = healer->GetMap()) {
                 playerCount = map->GetPlayersCountExceptGMs();
                 if (map->Is25ManRaid()) {
-                    raidCount = 25;
+                    if (map->IsHeroic()) {
+                        raidCount = 50;
+                    }
+                    else {
+                        raidCount = 25;
+                    }
                 }
                 else if (map->IsRaid()) {
-                    raidCount = 10;
+                    if (map->IsHeroic()) {
+                        raidCount = 20;
+                    }
+                    else {
+                        raidCount = 10;
+                    }
                 }
             }
         }

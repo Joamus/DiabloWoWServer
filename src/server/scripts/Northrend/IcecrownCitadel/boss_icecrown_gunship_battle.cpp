@@ -1915,8 +1915,16 @@ private:
             }
         }
 
-        uint32 factor = (raidCount / (playerCount > 0 ? playerCount : 1));
-        SetEffectValue(GetEffectValue() + _energyLeft * _energyLeft * 8 * factor);
+        int32 factor = (raidCount / (playerCount > 0 ? playerCount : 1));
+        int32 effect = 0;
+        int64 effectAsInt = GetEffectValue() + _energyLeft * _energyLeft * 8 * factor;
+        if (effectAsInt >= INT_MAX) {
+            effect = INT_MAX;
+        }
+        else {
+            effect = effectAsInt;
+        }
+        SetEffectValue(effect);
     }
 
     void Register() override
